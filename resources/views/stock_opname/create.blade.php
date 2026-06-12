@@ -166,4 +166,4 @@ $(document).ready(function(){
 
 </script>
 
-@endsections
+@endsection
