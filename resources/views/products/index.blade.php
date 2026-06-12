@@ -7,10 +7,24 @@
 
 <div class="container mt-4 mb-5">
 
-    <div class="mb-3">
-        <h3>Master Barang</h3>
-        <p class="text-muted mb-0">Data barang dan stok awal</p>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+    <div>
+        <h3 class="fw-bold mb-1">
+            Master Barang
+        </h3>
+
+        <p class="text-muted mb-0">
+            Data barang dan stok awal
+        </p>
     </div>
+
+    <a href="/products/create"
+       class="btn btn-success">
+        + Tambah Barang
+    </a>
+
+</div>
 
     @if(session('success'))
         <div class="alert alert-success">
