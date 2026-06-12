@@ -1,128 +1,169 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Stok Keluar - Dynagear Stock</title>
+@extends('layouts.app')
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@section('title', 'Stok Keluar')
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+@section('content')
 
-<nav class="navbar navbar-dark bg-primary">
-    <div class="container">
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-        <a href="/dashboard" class="navbar-brand">
-            Dynagear Stock
-        </a>
+    <div>
+        <h3 class="fw-bold mb-1">
+            Data Stok Keluar
+        </h3>
 
-        <a href="/stock-out/create"
-           class="btn btn-light btn-sm">
-            + Stok Keluar
-        </a>
-
-    </div>
-</nav>
-
-<div class="container mt-4">
-
-    <h3 class="mb-3">
-        Data Stok Keluar
-    </h3>
-
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    <div class="card shadow border-0">
-
-        <div class="table-responsive">
-
-            <table class="table table-bordered mb-0">
-
-                <thead class="table-danger">
-
-                    <tr>
-                        <th>Tanggal</th>
-                        <th>Gudang</th>
-                        <th>Tujuan</th>
-                        <th>Nomor SO</th>
-                        <th width="180">Aksi</th>
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    @forelse($stockOuts as $stock)
-
-                        <tr>
-
-                            <td>{{ $stock->tanggal }}</td>
-
-                            <td>{{ $stock->warehouse->nama_gudang ?? '-' }}</td>
-
-                            <td>{{ $stock->tujuan }}</td>
-
-                            <td>{{ $stock->nomor_so }}</td>
-
-                            <td>
-
-                                <a href="/stock-out/{{ $stock->id }}"
-                                   class="btn btn-info btn-sm">
-                                    Detail
-                                </a>
-
-                                <form action="/stock-out/{{ $stock->id }}"
-                                      method="POST"
-                                      class="d-inline">
-
-                                    @csrf
-                                    @method('DELETE')
-
-                                    <button class="btn btn-danger btn-sm"
-                                            onclick="return confirm('Hapus data?')">
-                                        Hapus
-                                    </button>
-
-                                </form>
-
-                            </td>
-
-                        </tr>
-
-                    @empty
-
-                        <tr>
-                            <td colspan="4" class="text-center">
-                                Belum ada data
-                            </td>
-                        </tr>
-
-                    @endforelse
-
-                </tbody>
-
-            </table>
-
-        </div>
-
+        <p class="text-muted mb-0">
+            Daftar transaksi barang keluar
+        </p>
     </div>
 
-    <div class="mt-3">
-        {{ $stockOuts->links() }}
+    <a href="/stock-out/create"
+       class="btn btn-danger">
+        + Stok Keluar
+    </a>
+
+</div>
+
+<div class="card shadow border-0 mb-3">
+
+    <div class="card-body">
+
+        <form method="GET">
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+                    <label class="form-label">
+                        Pencarian
+                    </label>
+
+                    <input type="text"
+                           name="search"
+                           value="{{ request('search') }}"
+                           class="form-control"
+                           placeholder="Cari No SO, Tujuan, Gudang...">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">
+                        Start Date
+                    </label>
+
+                    <input type="date"
+                           name="start_date"
+                           value="{{ request('start_date') }}"
+                           class="form-control">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">
+                        End Date
+                    </label>
+
+                    <input type="date"
+                           name="end_date"
+                           value="{{ request('end_date') }}"
+                           class="form-control">
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end gap-2">
+                    <button class="btn btn-primary">
+                        Cari
+                    </button>
+
+                    <a href="/stock-out"
+                       class="btn btn-secondary">
+                        Reset
+                    </a>
+                </div>
+
+            </div>
+
+        </form>
+
     </div>
 
 </div>
 
-</body>
-</html>
+<div class="card shadow border-0">
+
+    <div class="table-responsive">
+
+        <table class="table table-bordered align-middle mb-0">
+
+            <thead class="table-danger">
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Gudang</th>
+                    <th>Tujuan</th>
+                    <th>Nomor SO</th>
+                    <th width="180">Aksi</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @forelse($stockOuts as $stock)
+
+                    <tr>
+                        <td>
+                            {{ \Carbon\Carbon::parse($stock->tanggal)->format('d-m-Y') }}
+                        </td>
+
+                        <td>
+                            {{ $stock->warehouse->nama_gudang ?? '-' }}
+                        </td>
+
+                        <td>
+                            {{ $stock->tujuan ?? '-' }}
+                        </td>
+
+                        <td>
+                            {{ $stock->nomor_so ?? '-' }}
+                        </td>
+
+                        <td>
+                            <a href="/stock-out/{{ $stock->id }}"
+                               class="btn btn-info btn-sm">
+                                Detail
+                            </a>
+
+                            <form action="/stock-out/{{ $stock->id }}"
+                                  method="POST"
+                                  class="d-inline">
+
+                                @csrf
+                                @method('DELETE')
+
+                                <button class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Hapus data ini?')">
+                                    Hapus
+                                </button>
+
+                            </form>
+                        </td>
+                    </tr>
+
+                @empty
+
+                    <tr>
+                        <td colspan="5"
+                            class="text-center py-4">
+                            Belum ada data stok keluar
+                        </td>
+                    </tr>
+
+                @endforelse
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<div class="mt-3">
+    {{ $stockOuts->withQueryString()->links() }}
+</div>
+
+@endsection

@@ -70,7 +70,7 @@ class ItemRequestController extends Controller
 
     public function show(ItemRequest $itemRequest)
     {
-        $itemRequest->load('user', 'details.product');
+        $itemRequest->load('user','details.product.unit');
 
         return view('item_requests.show', compact('itemRequest'));
     }

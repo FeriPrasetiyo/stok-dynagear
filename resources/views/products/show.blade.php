@@ -1,27 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Detail Barang - Dynagear Stock</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.app')
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+@section('title', 'Judul Halaman')
 
-<nav class="navbar navbar-dark bg-primary">
-    <div class="container">
-        <a href="/dashboard" class="navbar-brand">Dynagear Stock</a>
+@section('content')
 
-        <a href="/products" class="btn btn-light btn-sm">
-            Kembali
-        </a>
-    </div>
-</nav>
-
-<div class="container mt-4 mb-5">
-
-    <div class="card shadow border-0 mb-4">
+<div class="card shadow border-0 mb-4">
         <div class="card-body">
 
             <div class="row">
@@ -80,6 +63,13 @@
                         </tr>
 
                         <tr>
+    <th>Merek</th>
+    <td>
+        {{ $product->brand->nama_merek ?? '-' }}
+    </td>
+</tr>
+
+                        <tr>
     <th>Gudang</th>
     <td>
         {{ $product->warehouse->nama_gudang ?? '-' }}
@@ -87,9 +77,23 @@
 </tr>
 
                         <tr>
-                            <th>Satuan</th>
-                            <td>{{ $product->satuan }}</td>
-                        </tr>
+    <th>Satuan</th>
+    <td>
+        @if($product->unit)
+
+            {{ $product->unit->nama_satuan }}
+
+            @if($product->unit->kode)
+                ({{ $product->unit->kode }})
+            @endif
+
+        @else
+
+            -
+
+        @endif
+    </td>
+</tr>
 
                         <tr>
                             <th>Lokasi Rak</th>
@@ -227,7 +231,4 @@
         </div>
     </div>
 
-</div>
-
-</body>
-</html>
+@endsection

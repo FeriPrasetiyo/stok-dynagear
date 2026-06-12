@@ -46,15 +46,29 @@
 
                 <label>Role</label>
 
-                <select name="role"
-                        class="form-control">
+                <select name="role" class="form-control">
 
-                    <option value="admin">Admin</option>
-                    <option value="manager">Manager</option>
-                    <option value="gudang">Gudang</option>
-                    <option value="sales">Sales</option>
+    <option value="admin">
+        Admin
+    </option>
 
-                </select>
+    <option value="manager">
+        Manager
+    </option>
+
+    <option value="gudang">
+        Gudang
+    </option>
+
+    <option value="purchasing">
+        Purchasing
+    </option>
+
+    <option value="sales">
+        Sales
+    </option>
+
+</select>
 
             </div>
 

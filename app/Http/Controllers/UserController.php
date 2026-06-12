@@ -21,24 +21,24 @@ class UserController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
-            'role' => 'required|in:admin,manager,gudang,sales',
-        ]);
+{
+    $request->validate([
+        'name' => 'required',
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|min:6',
+        'role' => 'required|in:admin,manager,gudang,purchasing,sales',
+    ]);
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-        ]);
+    User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'role' => $request->role,
+    ]);
 
-        return redirect('/users')
-            ->with('success', 'User berhasil ditambahkan');
-    }
+    return redirect('/users')
+        ->with('success', 'User berhasil ditambahkan');
+}
 
     public function edit(User $user)
     {
@@ -46,29 +46,29 @@ class UserController extends Controller
     }
 
     public function update(Request $request, User $user)
-    {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|min:6',
-            'role' => 'required|in:admin,manager,gudang,sales',
-        ]);
+{
+    $request->validate([
+        'name' => 'required',
+        'email' => 'required|email|unique:users,email,' . $user->id,
+        'password' => 'nullable|min:6',
+        'role' => 'required|in:admin,manager,gudang,purchasing,sales',
+    ]);
 
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'role' => $request->role,
-        ];
+    $data = [
+        'name' => $request->name,
+        'email' => $request->email,
+        'role' => $request->role,
+    ];
 
-        if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
-        }
-
-        $user->update($data);
-
-        return redirect('/users')
-            ->with('success', 'User berhasil diupdate');
+    if ($request->filled('password')) {
+        $data['password'] = Hash::make($request->password);
     }
+
+    $user->update($data);
+
+    return redirect('/users')
+        ->with('success', 'User berhasil diupdate');
+}
 
     public function destroy(User $user)
     {

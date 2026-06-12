@@ -35,6 +35,65 @@
     </div>
 @endif
 
+<div class="card shadow border-0 mb-3">
+    <div class="card-body">
+
+        <form method="GET">
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+                    <label class="form-label">
+                        Pencarian
+                    </label>
+
+                    <input type="text"
+                           name="search"
+                           value="{{ request('search') }}"
+                           class="form-control"
+                           placeholder="Cari No PO / Supplier / Status...">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">
+                        Start Date
+                    </label>
+
+                    <input type="date"
+                           name="start_date"
+                           value="{{ request('start_date') }}"
+                           class="form-control">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">
+                        End Date
+                    </label>
+
+                    <input type="date"
+                           name="end_date"
+                           value="{{ request('end_date') }}"
+                           class="form-control">
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end gap-2">
+                    <button class="btn btn-primary">
+                        Cari
+                    </button>
+
+                    <a href="/purchase-orders"
+                       class="btn btn-secondary">
+                        Reset
+                    </a>
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
 <div class="card shadow border-0">
 
     <div class="table-responsive">
@@ -68,21 +127,26 @@
                         </td>
 
                         <td>
-
                             @if($po->status == 'draft')
-                                <span class="badge bg-secondary">Draft</span>
+                                <span class="badge bg-secondary">
+                                    Draft
+                                </span>
 
                             @elseif($po->status == 'approved')
-                                <span class="badge bg-primary">Approved</span>
+                                <span class="badge bg-primary">
+                                    Approved
+                                </span>
 
                             @elseif($po->status == 'received')
-                                <span class="badge bg-success">Received</span>
+                                <span class="badge bg-success">
+                                    Received
+                                </span>
 
                             @else
-                                <span class="badge bg-danger">Cancelled</span>
-
+                                <span class="badge bg-danger">
+                                    Cancelled
+                                </span>
                             @endif
-
                         </td>
 
                         <td>
@@ -108,19 +172,23 @@
 
                             @endif
 
-                            <form action="/purchase-orders/{{ $po->id }}"
-                                  method="POST"
-                                  class="d-inline"
-                                  onsubmit="return confirm('Hapus PO ini?')">
+                            @if($po->status != 'received')
 
-                                @csrf
-                                @method('DELETE')
+                                <form action="/purchase-orders/{{ $po->id }}"
+                                      method="POST"
+                                      class="d-inline"
+                                      onsubmit="return confirm('Hapus PO ini?')">
 
-                                <button class="btn btn-danger btn-sm">
-                                    Hapus
-                                </button>
+                                    @csrf
+                                    @method('DELETE')
 
-                            </form>
+                                    <button class="btn btn-danger btn-sm">
+                                        Hapus
+                                    </button>
+
+                                </form>
+
+                            @endif
 
                         </td>
 
@@ -129,14 +197,10 @@
                 @empty
 
                     <tr>
-
                         <td colspan="5"
                             class="text-center">
-
                             Belum ada Purchase Order
-
                         </td>
-
                     </tr>
 
                 @endforelse
@@ -150,7 +214,7 @@
 </div>
 
 <div class="mt-3">
-    {{ $purchaseOrders->links() }}
+    {{ $purchaseOrders->withQueryString()->links() }}
 </div>
 
 @endsection

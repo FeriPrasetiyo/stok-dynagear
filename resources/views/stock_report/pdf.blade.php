@@ -48,7 +48,7 @@
              class="logo me-3">
 
         <div>
-            <h4 class="fw-bold mb-1">PT Dynagear</h4>
+            <h4 class="fw-bold mb-1">PT Dynagear Pandu Pratama</h4>
             <h5 class="mb-1">Laporan Stok Barang</h5>
             <small>Tanggal Cetak: {{ date('d-m-Y H:i') }}</small>
         </div>
@@ -56,53 +56,142 @@
     </div>
 
     <table class="table table-bordered table-sm">
-        <thead class="table-light">
+
+    <thead class="table-light">
+
+        <tr>
+            <th>No</th>
+            <th>Kode</th>
+            <th>Nama Barang</th>
+            <th>Kategori</th>
+            <th>Merek</th>
+            <th>Satuan</th>
+            <th>Gudang</th>
+            <th>Stok Awal</th>
+            <th>Masuk</th>
+            <th>Keluar</th>
+            <th>Stok Aktual</th>
+            <th>Minimum</th>
+            <th>Status</th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        @foreach($products as $index => $product)
+
             <tr>
-                <th>No</th>
-                <th>Kode</th>
-                <th>Nama Barang</th>
-                <th>Kategori</th>
-                <th>Stok Awal</th>
-                <th>Masuk</th>
-                <th>Keluar</th>
-                <th>Stok Aktual</th>
-                <th>Minimum</th>
-                <th>Status</th>
-            </tr>
-        </thead>
 
-        <tbody>
-            @foreach($products as $index => $product)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $product->kode_barang }}</td>
-                    <td>{{ $product->nama_barang }}</td>
-                    <td>{{ $product->kategori ?? '-' }}</td>
-                    <td>{{ $product->stok_awal }}</td>
-                    <td>{{ $product->stock_in }}</td>
-                    <td>{{ $product->stock_out }}</td>
-                    <td>{{ $product->stock_actual }}</td>
-                    <td>{{ $product->stok_minimum }}</td>
-                    <td>
-                        @if($product->stock_actual <= $product->stok_minimum)
-                            Stok Minimum
-                        @else
+                <td>{{ $index + 1 }}</td>
+
+                <td>
+                    {{ $product->kode_barang }}
+                </td>
+
+                <td>
+                    {{ $product->nama_barang }}
+                </td>
+
+                <td>
+                    {{ $product->kategori ?? '-' }}
+                </td>
+
+                <td>
+                    {{ $product->brand->nama_merek ?? '-' }}
+                </td>
+
+                <td>
+                    {{ $product->unit->nama_satuan ?? '-' }}
+                </td>
+
+                <td>
+                    {{ $product->warehouse->nama_gudang ?? '-' }}
+                </td>
+
+                <td>
+                    {{ $product->stok_awal }}
+                </td>
+
+                <td>
+                    {{ $product->stock_in }}
+                </td>
+
+                <td>
+                    {{ $product->stock_out }}
+                </td>
+
+                <td>
+                    <strong>
+                        {{ $product->stock_actual }}
+                    </strong>
+                </td>
+
+                <td>
+                    {{ $product->stok_minimum }}
+                </td>
+
+                <td>
+
+                    @if($product->stock_actual <= $product->stok_minimum)
+
+                        <span class="badge bg-danger">
+                            Minimum
+                        </span>
+
+                    @else
+
+                        <span class="badge bg-success">
                             Aman
-                        @endif
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+                        </span>
 
-    <div class="mt-5 d-flex justify-content-end">
-        <div class="text-center">
-            <p class="mb-5">Mengetahui,</p>
-            <strong>_____________________</strong>
-        </div>
+                    @endif
+
+                </td>
+
+            </tr>
+
+        @endforeach
+
+    </tbody>
+
+</table>
+
+    <div class="row mt-5">
+
+    <div class="col-6 text-center">
+
+        Mengetahui,
+
+        <br><br><br><br>
+
+        ____________________
+
+        <br>
+
+        Manager
+
     </div>
+
+    <div class="col-6 text-center">
+
+        Dibuat Oleh,
+
+        <br><br><br><br>
+
+        ____________________
+
+        <br>
+
+        Staff Gudang
+
+    </div>
+
+</div>
 
 </div>
 
 </body>
 </html>
+
+

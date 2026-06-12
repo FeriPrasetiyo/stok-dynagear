@@ -18,6 +18,8 @@ use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\BrandController;
+use App\Http\Controllers\UnitController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,13 +41,31 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 /*
 |--------------------------------------------------------------------------
-| Dashboard (Semua User Login)
+| Dashboard - Semua User Login
 |--------------------------------------------------------------------------
 */
 
 Route::middleware('auth')->group(function () {
-
     Route::get('/dashboard', [DashboardController::class, 'index']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Admin + Manager
+| Semua fitur management
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:admin,manager'])->group(function () {
+
+    Route::resource('/users', UserController::class);
+
+    Route::get('/stock-report', [StockReportController::class, 'index']);
+    Route::get('/stock-report/pdf', [StockReportController::class, 'pdf']);
+    Route::get('/stock-report/export', [StockReportController::class, 'export']);
+    Route::get('/stock-report/print', [StockReportController::class, 'print']);
+
+    Route::get('/activity-logs', [ActivityLogController::class, 'index']);
 
 });
 
@@ -57,38 +77,36 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
 
-    Route::resource('/users', UserController::class);
-
-    Route::get('/backup', [BackupController::class,'index']);
-    Route::post('/backup/download',[BackupController::class,'download']);
+    Route::get('/backup', [BackupController::class, 'index']);
+    Route::post('/backup/download', [BackupController::class, 'download']);
 
 });
 
 /*
 |--------------------------------------------------------------------------
-| Admin + Gudang
+| Admin + Manager + Gudang
+| Inventory
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:admin,gudang'])->group(function () {
-    Route::get('/products/{product}/qr',[ProductController::class, 'qr']);
-    Route::get('/scan-qr', function () {return view('products.scan_qr');});
-    
+Route::middleware(['auth', 'role:admin,manager,gudang'])->group(function () {
+
+    Route::get('/products/{product}/qr', [ProductController::class, 'qr']);
+
+    Route::get('/scan-qr', function () {
+        return view('products.scan_qr');
+    });
+
     Route::resource('/products', ProductController::class);
 
     Route::resource('/categories', CategoryController::class);
-
-    Route::resource('/suppliers', SupplierController::class);
-
+    Route::resource('/brands', BrandController::class);
+    Route::resource('/units', UnitController::class);
     Route::resource('/warehouses', WarehouseController::class);
 
     Route::resource('/stock-in', StockInController::class);
-
     Route::resource('/stock-out', StockOutController::class);
-
     Route::resource('/stock-opname', StockOpnameController::class);
-
-    Route::get('/stock-card', [StockCardController::class, 'index']);
 
     Route::get('/products-import', [ProductController::class, 'importForm']);
     Route::post('/products-import', [ProductController::class, 'import']);
@@ -97,37 +115,25 @@ Route::middleware(['auth', 'role:admin,gudang'])->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Admin + Manager
+| Kartu Stok
+| Admin + Manager + Gudang + Sales
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:admin,manager'])->group(function () {
+Route::middleware(['auth', 'role:admin,manager,gudang,sales'])->group(function () {
 
-    Route::get('/stock-report', [StockReportController::class, 'index']);
-    Route::get('/stock-report/pdf', [StockReportController::class, 'pdf']);
-    Route::get('/stock-report/export', [StockReportController::class, 'export']);
+    Route::get('/stock-card', [StockCardController::class, 'index']);
 
-    Route::get('/activity-logs', [ActivityLogController::class, 'index']);
-
-    Route::resource('/purchase-orders', PurchaseOrderController::class);
-
-    Route::post('/purchase-orders/{purchaseOrder}/approve',[PurchaseOrderController::class, 'approve']);
-
-    Route::post('/purchase-orders/{purchaseOrder}/cancel',[PurchaseOrderController::class, 'cancel']);
-
-    Route::get('/stock-report/print', [StockReportController::class, 'print']);
-
-    Route::post('/purchase-orders/{purchaseOrder}/receive',[PurchaseOrderController::class, 'receive']
-);
 });
 
 /*
 |--------------------------------------------------------------------------
-| Admin + Sales
+| Request Barang
+| Admin + Manager + Gudang
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:admin,sales'])->group(function () {
+Route::middleware(['auth', 'role:admin,manager,gudang'])->group(function () {
 
     Route::resource('/item-requests', ItemRequestController::class);
 
@@ -139,6 +145,47 @@ Route::middleware(['auth', 'role:admin,sales'])->group(function () {
     Route::post(
         '/item-requests/{itemRequest}/reject',
         [ItemRequestController::class, 'reject']
+    );
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| Supplier + Purchase Order
+| Admin + Manager + Purchasing
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:admin,manager,purchasing'])->group(function () {
+
+    Route::resource('/suppliers', SupplierController::class);
+
+    Route::resource('/purchase-orders', PurchaseOrderController::class);
+
+    Route::post(
+        '/purchase-orders/{purchaseOrder}/receive',
+        [PurchaseOrderController::class, 'receive']
+    );
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| Approval Purchase Order
+| Admin + Manager Only
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:admin,manager'])->group(function () {
+
+    Route::post(
+        '/purchase-orders/{purchaseOrder}/approve',
+        [PurchaseOrderController::class, 'approve']
+    );
+
+    Route::post(
+        '/purchase-orders/{purchaseOrder}/cancel',
+        [PurchaseOrderController::class, 'cancel']
     );
 
 });

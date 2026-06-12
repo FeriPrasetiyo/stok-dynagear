@@ -1,35 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Master Barang - Dynagear Stock</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.app')
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+@section('title', 'Data Barang')
 
-<nav class="navbar navbar-dark bg-primary">
-    <div class="container">
+@section('content')
 
-        <a href="/dashboard" class="navbar-brand">
-            Dynagear Stock
-        </a>
-
-        <div class="d-flex gap-2">
-            <a href="/products-import"
-               class="btn btn-success btn-sm">
-                Import CSV
-            </a>
-
-            <a href="/products/create"
-               class="btn btn-light btn-sm">
-                + Tambah Barang
-            </a>
-        </div>
-
-    </div>
-</nav>
 
 <div class="container mt-4 mb-5">
 
@@ -102,39 +76,53 @@
                         </h5>
 
                         <p class="mb-1">
-                            <strong>Kode:</strong>
-                            {{ $product->kode_barang }}
-                        </p>
+    <strong>Kategori:</strong>
+    {{ $product->kategori ?? '-' }}
+</p>
 
-                        <p class="mb-1">
-                            <strong>Kategori:</strong>
-                            {{ $product->kategori ?? '-' }}
-                        </p>
+<p class="mb-1">
+    <strong>Merek:</strong>
+    {{ $product->brand->nama_merek ?? '-' }}
+</p>
 
-                        <p class="mb-1">
-                            <strong>Gudang:</strong>
-                            {{ $product->warehouse->nama_gudang ?? '-' }}
-                        </p>
+<p class="mb-1">
+    <strong>Gudang:</strong>
+    {{ $product->warehouse->nama_gudang ?? '-' }}
+</p>
 
-                        <p class="mb-1">
-                            <strong>Satuan:</strong>
-                            {{ $product->satuan }}
-                        </p>
+<p class="mb-1">
+    <strong>Satuan:</strong>
 
-                        <p class="mb-1">
-                            <strong>Stok Awal:</strong>
-                            {{ $product->stok_awal }}
-                        </p>
+    @if($product->unit)
 
-                        <p class="mb-1">
-                            <strong>Stok Minimum:</strong>
-                            {{ $product->stok_minimum }}
-                        </p>
+        {{ $product->unit->nama_satuan }}
 
-                        <p class="mb-1">
-                            <strong>Lokasi Rak:</strong>
-                            {{ $product->lokasi_rak ?? '-' }}
-                        </p>
+        @if($product->unit->kode)
+            ({{ $product->unit->kode }})
+        @endif
+
+    @else
+
+        -
+
+    @endif
+
+</p>
+
+<p class="mb-1">
+    <strong>Stok Awal:</strong>
+    {{ $product->stok_awal }}
+</p>
+
+<p class="mb-1">
+    <strong>Stok Minimum:</strong>
+    {{ $product->stok_minimum }}
+</p>
+
+<p class="mb-1">
+    <strong>Lokasi Rak:</strong>
+    {{ $product->lokasi_rak ?? '-' }}
+</p>
 
                         @php
                             $stokAktual = $product->stok_awal;
@@ -209,5 +197,4 @@
 
 </div>
 
-</body>
-</html>
+@endsection

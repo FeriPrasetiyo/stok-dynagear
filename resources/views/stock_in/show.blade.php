@@ -1,76 +1,117 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Detail Stok Masuk</title>
+@extends('layouts.app')
 
-    <meta charset="utf-8">
+@section('title', 'Detail Stok Masuk')
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1">
+@section('content')
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-</head>
-<body class="bg-light">
+<div class="card shadow border-0 mb-4">
 
-<div class="container mt-4">
-
-    <div class="card shadow">
-
-        <div class="card-header bg-primary text-white">
-
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">
             Detail Stok Masuk
+        </h4>
+    </div>
 
-        </div>
+    <div class="card-body">
 
-        <div class="card-body">
+        <table class="table table-bordered">
 
-            <p>
-                <strong>Tanggal :</strong>
-                {{ $stockIn->tanggal }}
-            </p>
+            <tr>
+                <th width="200">Tanggal</th>
+                <td>{{ $stockIn->tanggal }}</td>
+            </tr>
 
-            <p>
-    <strong>Gudang :</strong>
-    {{ $stockIn->warehouse->nama_gudang ?? '-' }}
-</p>
+            <tr>
+                <th>Gudang</th>
+                <td>
+                    {{ $stockIn->warehouse->nama_gudang ?? '-' }}
+                </td>
+            </tr>
 
-            <p>
-                <strong>Supplier :</strong>
-                {{ $stockIn->supplier }}
-            </p>
+            <tr>
+                <th>Supplier</th>
+                <td>
+                    {{ $stockIn->supplier ?? '-' }}
+                </td>
+            </tr>
 
-            <p>
-                <strong>No Dokumen :</strong>
-                {{ $stockIn->nomor_dokumen }}
-            </p>
+            <tr>
+                <th>No Dokumen</th>
+                <td>
+                    {{ $stockIn->nomor_dokumen ?? '-' }}
+                </td>
+            </tr>
 
-            <p>
-                <strong>Keterangan :</strong>
-                {{ $stockIn->keterangan }}
-            </p>
+            <tr>
+                <th>Keterangan</th>
+                <td>
+                    {{ $stockIn->keterangan ?? '-' }}
+                </td>
+            </tr>
 
-            <hr>
+        </table>
 
-            <table class="table table-bordered">
+    </div>
 
-                <thead>
+</div>
 
-                    <tr>
-                        <th>Barang</th>
-                        <th>Qty</th>
-                    </tr>
+<div class="card shadow border-0">
 
-                </thead>
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0">
+            Detail Barang
+        </h5>
+    </div>
 
-                <tbody>
+    <div class="table-responsive">
 
-                    @foreach($stockIn->details as $detail)
+        @php
+            $totalQty = 0;
+        @endphp
+
+        <table class="table table-bordered align-middle mb-0">
+
+            <thead class="table-success">
+
+                <tr>
+                    <th>Kode Barang</th>
+                    <th>Nama Barang</th>
+                    <th>Satuan</th>
+                    <th width="120">Qty</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                @foreach($stockIn->details as $detail)
+
+                    @php
+                        $totalQty += $detail->qty;
+                    @endphp
 
                     <tr>
 
                         <td>
-                            {{ $detail->product->nama_barang }}
+                            {{ $detail->product->kode_barang ?? '-' }}
+                        </td>
+
+                        <td>
+                            {{ $detail->product->nama_barang ?? '-' }}
+                        </td>
+
+                        <td>
+
+                            {{ $detail->product->unit->nama_satuan ?? '-' }}
+
+                            @if(
+                                $detail->product &&
+                                $detail->product->unit &&
+                                $detail->product->unit->kode
+                            )
+                                ({{ $detail->product->unit->kode }})
+                            @endif
+
                         </td>
 
                         <td>
@@ -79,22 +120,35 @@
 
                     </tr>
 
-                    @endforeach
+                @endforeach
 
-                </tbody>
+                <tr class="table-light">
 
-            </table>
+                    <th colspan="3" class="text-end">
+                        Total Qty
+                    </th>
 
-            <a href="/stock-in"
-               class="btn btn-secondary">
-                Kembali
-            </a>
+                    <th>
+                        {{ $totalQty }}
+                    </th>
 
-        </div>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div class="card-footer bg-white">
+
+        <a href="/stock-in"
+           class="btn btn-secondary">
+            Kembali
+        </a>
 
     </div>
 
 </div>
 
-</body>
-</html>
+@endsection

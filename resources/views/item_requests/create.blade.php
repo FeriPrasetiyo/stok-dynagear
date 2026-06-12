@@ -4,6 +4,8 @@
 
 @section('content')
 
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+
 <div class="card shadow border-0">
     <div class="card-header bg-success text-white">
         <h4 class="mb-0">Buat Request Barang</h4>
@@ -23,6 +25,7 @@
             @csrf
 
             <div class="row">
+
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Tanggal</label>
                     <input type="date"
@@ -49,6 +52,7 @@
                            value="{{ old('tujuan') }}"
                            placeholder="Contoh: Produksi / Assembling">
                 </div>
+
             </div>
 
             <div class="mb-3">
@@ -63,12 +67,16 @@
             <h5 class="fw-bold mb-3">Detail Barang</h5>
 
             <div id="items">
+
                 <div class="row mb-3 item-row">
+
                     <div class="col-md-7 mb-2">
+                        <label class="form-label">Barang</label>
+
                         <select name="product_id[]"
-                                class="form-control"
+                                class="form-control product-select"
                                 required>
-                            <option value="">Pilih Barang</option>
+                            <option value="">Cari / Pilih Barang</option>
 
                             @foreach($products as $product)
                                 <option value="{{ $product->id }}">
@@ -79,6 +87,8 @@
                     </div>
 
                     <div class="col-md-3 mb-2">
+                        <label class="form-label">Qty</label>
+
                         <input type="number"
                                name="qty[]"
                                class="form-control"
@@ -87,13 +97,15 @@
                                required>
                     </div>
 
-                    <div class="col-md-2 mb-2">
+                    <div class="col-md-2 mb-2 d-flex align-items-end">
                         <button type="button"
                                 class="btn btn-danger w-100 remove-item">
                             Hapus
                         </button>
                     </div>
+
                 </div>
+
             </div>
 
             <button type="button"
@@ -111,19 +123,72 @@
                     Batal
                 </a>
             </div>
+
         </form>
 
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script>
+    function initSelect2() {
+        $('.product-select').select2({
+            placeholder: 'Cari barang...',
+            width: '100%'
+        });
+    }
+
+    initSelect2();
+
     document.getElementById('addItem').addEventListener('click', function () {
-        const row = document.querySelector('.item-row').cloneNode(true);
 
-        row.querySelector('select').value = '';
-        row.querySelector('input').value = '';
+        let html = `
+            <div class="row mb-3 item-row">
 
-        document.getElementById('items').appendChild(row);
+                <div class="col-md-7 mb-2">
+                    <label class="form-label">Barang</label>
+
+                    <select name="product_id[]"
+                            class="form-control product-select"
+                            required>
+                        <option value="">Cari / Pilih Barang</option>
+
+                        @foreach($products as $product)
+                            <option value="{{ $product->id }}">
+                                {{ $product->kode_barang }} - {{ $product->nama_barang }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-3 mb-2">
+                    <label class="form-label">Qty</label>
+
+                    <input type="number"
+                           name="qty[]"
+                           class="form-control"
+                           placeholder="Qty"
+                           min="1"
+                           required>
+                </div>
+
+                <div class="col-md-2 mb-2 d-flex align-items-end">
+                    <button type="button"
+                            class="btn btn-danger w-100 remove-item">
+                        Hapus
+                    </button>
+                </div>
+
+            </div>
+        `;
+
+        document.getElementById('items')
+            .insertAdjacentHTML('beforeend', html);
+
+        initSelect2();
     });
 
     document.addEventListener('click', function (e) {

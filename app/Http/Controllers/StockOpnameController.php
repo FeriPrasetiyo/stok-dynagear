@@ -19,9 +19,21 @@ class StockOpnameController extends Controller
         return $stockAwal + $stockIn - $stockOut;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $opnames = StockOpname::with('product')
+        $opnames = StockOpname::with('product.unit')
+            ->when($request->search, function ($query) use ($request) {
+                $query->whereHas('product', function ($q) use ($request) {
+                    $q->where('kode_barang', 'like', '%'.$request->search.'%')
+                      ->orWhere('nama_barang', 'like', '%'.$request->search.'%');
+                });
+            })
+            ->when($request->start_date, function ($query) use ($request) {
+                $query->whereDate('tanggal', '>=', $request->start_date);
+            })
+            ->when($request->end_date, function ($query) use ($request) {
+                $query->whereDate('tanggal', '<=', $request->end_date);
+            })
             ->latest()
             ->paginate(10);
 
@@ -30,7 +42,9 @@ class StockOpnameController extends Controller
 
     public function create()
     {
-        $products = Product::orderBy('nama_barang')->get();
+        $products = Product::with('unit')
+            ->orderBy('nama_barang')
+            ->get();
 
         return view('stock_opname.create', compact('products'));
     }
@@ -47,7 +61,7 @@ class StockOpnameController extends Controller
         $stokSistem = $this->currentStock($request->product_id);
         $selisih = $request->stok_fisik - $stokSistem;
 
-        StockOpname::create([
+        $opname = StockOpname::create([
             'tanggal' => $request->tanggal,
             'product_id' => $request->product_id,
             'stok_sistem' => $stokSistem,
@@ -56,13 +70,34 @@ class StockOpnameController extends Controller
             'keterangan' => $request->keterangan,
         ]);
 
+        activity_log(
+            'CREATE',
+            'STOCK OPNAME',
+            'Membuat stock opname barang ID: '.$opname->product_id
+        );
+
         return redirect('/stock-opname')
             ->with('success', 'Stock opname berhasil disimpan');
     }
 
+    public function show(StockOpname $stockOpname)
+    {
+        $stockOpname->load('product.unit');
+
+        return view('stock_opname.show', compact('stockOpname'));
+    }
+
     public function destroy(StockOpname $stockOpname)
     {
+        $namaBarang = $stockOpname->product->nama_barang ?? '-';
+
         $stockOpname->delete();
+
+        activity_log(
+            'DELETE',
+            'STOCK OPNAME',
+            'Menghapus stock opname barang: '.$namaBarang
+        );
 
         return redirect('/stock-opname')
             ->with('success', 'Data stock opname berhasil dihapus');

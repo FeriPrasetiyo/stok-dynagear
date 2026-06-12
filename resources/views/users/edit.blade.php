@@ -78,6 +78,11 @@
                     Manager
                 </option>
 
+                <option value="purchasing"
+                    {{ $user->role == 'purchasing' ? 'selected' : '' }}>
+                    Purchasing
+                </option>
+
                 <option value="gudang"
                     {{ $user->role == 'gudang' ? 'selected' : '' }}>
                     Gudang

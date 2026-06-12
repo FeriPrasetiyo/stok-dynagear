@@ -60,47 +60,50 @@
                         </td>
 
                         <td>
-                            <a href="/item-requests/{{ $requestItem->id }}"
-                               class="btn btn-info btn-sm">
-                                Detail
-                            </a>
+    <a href="/item-requests/{{ $requestItem->id }}"
+       class="btn btn-info btn-sm">
+        Detail
+    </a>
 
-                            @if($requestItem->status == 'pending')
-                                <form action="/item-requests/{{ $requestItem->id }}/approve"
-                                      method="POST"
-                                      class="d-inline">
-                                    @csrf
+    @if(
+        $requestItem->status == 'pending' &&
+        in_array(auth()->user()->role, ['admin', 'manager'])
+    )
+        <form action="/item-requests/{{ $requestItem->id }}/approve"
+              method="POST"
+              class="d-inline">
+            @csrf
 
-                                    <button class="btn btn-success btn-sm">
-                                        Approve
-                                    </button>
-                                </form>
+            <button class="btn btn-success btn-sm">
+                Approve
+            </button>
+        </form>
 
-                                <form action="/item-requests/{{ $requestItem->id }}/reject"
-                                      method="POST"
-                                      class="d-inline">
-                                    @csrf
+        <form action="/item-requests/{{ $requestItem->id }}/reject"
+              method="POST"
+              class="d-inline">
+            @csrf
 
-                                    <button class="btn btn-warning btn-sm">
-                                        Reject
-                                    </button>
-                                </form>
-                            @endif
+            <button class="btn btn-warning btn-sm">
+                Reject
+            </button>
+        </form>
+    @endif
 
-                            @if($requestItem->status != 'approved')
-                                <form action="/item-requests/{{ $requestItem->id }}"
-                                      method="POST"
-                                      class="d-inline"
-                                      onsubmit="return confirm('Hapus request ini?')">
-                                    @csrf
-                                    @method('DELETE')
+    @if($requestItem->status != 'approved')
+        <form action="/item-requests/{{ $requestItem->id }}"
+              method="POST"
+              class="d-inline"
+              onsubmit="return confirm('Hapus request ini?')">
+            @csrf
+            @method('DELETE')
 
-                                    <button class="btn btn-danger btn-sm">
-                                        Hapus
-                                    </button>
-                                </form>
-                            @endif
-                        </td>
+            <button class="btn btn-danger btn-sm">
+                Hapus
+            </button>
+        </form>
+    @endif
+</td>
                     </tr>
                 @empty
                     <tr>

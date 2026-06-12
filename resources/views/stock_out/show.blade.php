@@ -1,100 +1,146 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Detail Stok Keluar</title>
+@extends('layouts.app')
 
-    <meta charset="utf-8">
+@section('title', 'Detail Stok Keluar')
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1">
+@section('content')
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-</head>
-<body class="bg-light">
+<div class="card shadow border-0 mb-4">
 
-<div class="container mt-4">
-
-    <div class="card shadow">
-
-        <div class="card-header bg-danger text-white">
-
+    <div class="card-header bg-danger text-white">
+        <h4 class="mb-0">
             Detail Stok Keluar
+        </h4>
+    </div>
 
-        </div>
+    <div class="card-body">
 
-        <div class="card-body">
+        <table class="table table-bordered">
 
-            <p>
-                <strong>Tanggal :</strong>
-                {{ $stockOut->tanggal }}
-            </p>
+            <tr>
+                <th width="200">Tanggal</th>
+                <td>{{ $stockOut->tanggal }}</td>
+            </tr>
 
-            <p>
-    <strong>Gudang :</strong>
-    {{ $stockOut->warehouse->nama_gudang ?? '-' }}
-</p>
+            <tr>
+                <th>Gudang</th>
+                <td>
+                    {{ $stockOut->warehouse->nama_gudang ?? '-' }}
+                </td>
+            </tr>
 
-            <p>
-                <strong>Tujuan :</strong>
-                {{ $stockOut->tujuan }}
-            </p>
+            <tr>
+                <th>Tujuan</th>
+                <td>
+                    {{ $stockOut->tujuan ?? '-' }}
+                </td>
+            </tr>
 
-            <p>
-                <strong>Nomor SO :</strong>
-                {{ $stockOut->nomor_so }}
-            </p>
+            <tr>
+                <th>Nomor SO</th>
+                <td>
+                    {{ $stockOut->nomor_so ?? '-' }}
+                </td>
+            </tr>
 
-            <p>
-                <strong>Keterangan :</strong>
-                {{ $stockOut->keterangan }}
-            </p>
+            <tr>
+                <th>Keterangan</th>
+                <td>
+                    {{ $stockOut->keterangan ?? '-' }}
+                </td>
+            </tr>
 
-            <hr>
-
-            <table class="table table-bordered">
-
-                <thead>
-
-                    <tr>
-                        <th>Barang</th>
-                        <th>Qty</th>
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    @foreach($stockOut->details as $detail)
-
-                    <tr>
-
-                        <td>
-                            {{ $detail->product->nama_barang }}
-                        </td>
-
-                        <td>
-                            {{ $detail->qty }}
-                        </td>
-
-                    </tr>
-
-                    @endforeach
-
-                </tbody>
-
-            </table>
-
-            <a href="/stock-out"
-               class="btn btn-secondary">
-                Kembali
-            </a>
-
-        </div>
+        </table>
 
     </div>
 
 </div>
 
-</body>
-</html>
+<div class="card shadow border-0">
+
+    <div class="card-header bg-danger text-white">
+        <h5 class="mb-0">
+            Detail Barang Keluar
+        </h5>
+    </div>
+
+    <div class="table-responsive">
+
+        @php
+            $totalQty = 0;
+        @endphp
+
+        <table class="table table-bordered align-middle mb-0">
+
+            <thead class="table-danger">
+                <tr>
+                    <th>Kode Barang</th>
+                    <th>Nama Barang</th>
+                    <th>Satuan</th>
+                    <th width="120">Qty</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @foreach($stockOut->details as $detail)
+
+                    @php
+                        $totalQty += $detail->qty;
+                    @endphp
+
+                    <tr>
+                        <td>
+                            {{ $detail->product->kode_barang ?? '-' }}
+                        </td>
+
+                        <td>
+                            {{ $detail->product->nama_barang ?? '-' }}
+                        </td>
+
+                        <td>
+                            {{ $detail->product->unit->nama_satuan ?? '-' }}
+
+                            @if(
+                                $detail->product &&
+                                $detail->product->unit &&
+                                $detail->product->unit->kode
+                            )
+                                ({{ $detail->product->unit->kode }})
+                            @endif
+                        </td>
+
+                        <td>
+                            {{ $detail->qty }}
+                        </td>
+                    </tr>
+
+                @endforeach
+
+                <tr class="table-light">
+                    <th colspan="3" class="text-end">
+                        Total Qty
+                    </th>
+
+                    <th>
+                        {{ $totalQty }}
+                    </th>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div class="card-footer bg-white">
+
+        <a href="/stock-out"
+           class="btn btn-secondary">
+            Kembali
+        </a>
+
+    </div>
+
+</div>
+
+@endsection

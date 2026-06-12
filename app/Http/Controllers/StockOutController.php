@@ -21,18 +21,46 @@ class StockOutController extends Controller
         return $stockAwal + $stockIn - $stockOut;
     }
 
-    public function index()
-    {
-        $stockOuts = StockOut::with('details.product', 'warehouse')
-            ->latest()
-            ->paginate(10);
+    public function index(Request $request)
+{
+    $stockOuts = StockOut::with(
+        'details.product.unit',
+        'warehouse'
+    )
+    ->when($request->search, function ($query) use ($request) {
 
-        return view('stock_out.index', compact('stockOuts'));
-    }
+        $query->where(function ($q) use ($request) {
+
+            $q->where('nomor_so', 'like', '%'.$request->search.'%')
+              ->orWhere('tujuan', 'like', '%'.$request->search.'%')
+              ->orWhereHas('warehouse', function ($warehouseQuery) use ($request) {
+                  $warehouseQuery->where(
+                      'nama_gudang',
+                      'like',
+                      '%'.$request->search.'%'
+                  );
+              });
+
+        });
+
+    })
+    ->when($request->start_date, function ($query) use ($request) {
+        $query->whereDate('tanggal', '>=', $request->start_date);
+    })
+    ->when($request->end_date, function ($query) use ($request) {
+        $query->whereDate('tanggal', '<=', $request->end_date);
+    })
+    ->latest()
+    ->paginate(10);
+
+    return view('stock_out.index', compact('stockOuts'));
+}
 
     public function create()
     {
-        $products = Product::orderBy('nama_barang')->get();
+        $products = Product::with('unit')
+    ->orderBy('nama_barang')
+    ->get();
         $warehouses = Warehouse::orderBy('nama_gudang')->get();
 
         return view('stock_out.create', compact('products', 'warehouses'));
@@ -101,11 +129,14 @@ class StockOutController extends Controller
     }
 
     public function show(StockOut $stockOut)
-    {
-        $stockOut->load('details.product', 'warehouse');
+{
+    $stockOut->load(
+        'warehouse',
+        'details.product.unit'
+    );
 
-        return view('stock_out.show', compact('stockOut'));
-    }
+    return view('stock_out.show', compact('stockOut'));
+}
 
     public function destroy(StockOut $stockOut)
     {

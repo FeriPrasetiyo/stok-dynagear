@@ -5,32 +5,44 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use App\Models\Category;
+use App\Models\Brand;
+use App\Models\Unit;
 use Illuminate\Support\Facades\Storage;
+
 
 class ProductController extends Controller
 {
     public function index(Request $request)
-    {
-        $search = $request->search;
+{
+    $search = $request->search;
 
-        $products = Product::with('warehouse')
-            ->when($search, function ($query) use ($search) {
-                $query->where('kode_barang', 'like', "%{$search}%")
-                    ->orWhere('nama_barang', 'like', "%{$search}%")
-                    ->orWhere('kategori', 'like', "%{$search}%");
-            })
-            ->latest()
-            ->paginate(10);
+    $products = Product::with('warehouse', 'brand', 'unit')
+        ->when($search, function ($query) use ($search) {
+            $query->where('kode_barang', 'like', "%{$search}%")
+                ->orWhere('nama_barang', 'like', "%{$search}%")
+                ->orWhere('kategori', 'like', "%{$search}%");
+        })
+        ->latest()
+        ->paginate(10);
 
-        return view('products.index', compact('products', 'search'));
-    }
+    return view('products.index', compact('products', 'search'));
+}
 
     public function create()
-    {
-        $warehouses = Warehouse::orderBy('nama_gudang')->get();
+{
+    $warehouses = Warehouse::orderBy('nama_gudang')->get();
+    $brands = Brand::orderBy('nama_merek')->get();
+    $categories = Category::orderBy('nama_kategori')->get();
+    $units = Unit::orderBy('nama_satuan')->get();
 
-        return view('products.create', compact('warehouses'));
-    }
+    return view('products.create', compact(
+        'warehouses',
+        'brands',
+        'categories',
+        'units'
+    ));
+}
 
     public function store(Request $request)
     {
@@ -39,7 +51,8 @@ class ProductController extends Controller
             'kode_barang' => 'required|unique:products,kode_barang',
             'nama_barang' => 'required',
             'kategori' => 'nullable',
-            'satuan' => 'required',
+            'brand_id' => 'nullable|exists:brands,id',
+            'unit_id' => 'required|exists:units,id',
             'stok_awal' => 'required|numeric|min:0',
             'stok_minimum' => 'required|numeric|min:0',
             'lokasi_rak' => 'nullable',
@@ -52,7 +65,8 @@ class ProductController extends Controller
             'kode_barang',
             'nama_barang',
             'kategori',
-            'satuan',
+            'brand_id',
+            'unit_id',
             'stok_awal',
             'stok_minimum',
             'lokasi_rak',
@@ -71,46 +85,52 @@ class ProductController extends Controller
     }
 
     public function show(Product $product)
-    {
-        $product->load('warehouse');
-        
-        $stockIn = \App\Models\StockInDetail::where('product_id', $product->id)
-            ->sum('qty');
+{
+    $product->load('warehouse', 'brand', 'unit');
 
-        $stockOut = \App\Models\StockOutDetail::where('product_id', $product->id)
-            ->sum('qty');
+    $stockIn = \App\Models\StockInDetail::where('product_id', $product->id)
+        ->sum('qty');
 
-        $stockActual = $product->stok_awal + $stockIn - $stockOut;
+    $stockOut = \App\Models\StockOutDetail::where('product_id', $product->id)
+        ->sum('qty');
 
-        $stockInDetails = \App\Models\StockInDetail::with('product')
-            ->where('product_id', $product->id)
-            ->latest()
-            ->get();
+    $stockActual = $product->stok_awal + $stockIn - $stockOut;
 
-        $stockOutDetails = \App\Models\StockOutDetail::with('product')
-            ->where('product_id', $product->id)
-            ->latest()
-            ->get();
+    $stockInDetails = \App\Models\StockInDetail::with('product')
+        ->where('product_id', $product->id)
+        ->latest()
+        ->get();
 
-        return view('products.show', compact(
-            'product',
-            'stockIn',
-            'stockOut',
-            'stockActual',
-            'stockInDetails',
-            'stockOutDetails'
-        ));
-    }
+    $stockOutDetails = \App\Models\StockOutDetail::with('product')
+        ->where('product_id', $product->id)
+        ->latest()
+        ->get();
 
-    public function edit(Product $product)
-    {
-        $warehouses = Warehouse::orderBy('nama_gudang')->get();
+    return view('products.show', compact(
+        'product',
+        'stockIn',
+        'stockOut',
+        'stockActual',
+        'stockInDetails',
+        'stockOutDetails'
+    ));
+}
 
-        return view('products.edit', compact(
-            'product',
-            'warehouses'
-        ));
-    }
+public function edit(Product $product)
+{
+    $warehouses = Warehouse::orderBy('nama_gudang')->get();
+    $brands = Brand::orderBy('nama_merek')->get();
+    $categories = Category::orderBy('nama_kategori')->get();
+    $units = Unit::orderBy('nama_satuan')->get();
+
+    return view('products.edit', compact(
+        'product',
+        'warehouses',
+        'brands',
+        'categories',
+        'units'
+    ));
+}
 
     public function update(Request $request, Product $product)
     {
@@ -119,7 +139,8 @@ class ProductController extends Controller
             'kode_barang' => 'required|unique:products,kode_barang,' . $product->id,
             'nama_barang' => 'required',
             'kategori' => 'nullable',
-            'satuan' => 'required',
+            'brand_id' => 'nullable|exists:brands,id',
+            'unit_id' => 'required|exists:units,id',
             'stok_awal' => 'required|numeric|min:0',
             'stok_minimum' => 'required|numeric|min:0',
             'lokasi_rak' => 'nullable',
@@ -132,7 +153,8 @@ class ProductController extends Controller
             'kode_barang',
             'nama_barang',
             'kategori',
-            'satuan',
+            'brand_id',
+            'unit_id',
             'stok_awal',
             'stok_minimum',
             'lokasi_rak',
@@ -187,7 +209,7 @@ public function import(Request $request)
             [
                 'nama_barang' => $row[1],
                 'kategori' => $row[2] ?? null,
-                'satuan' => $row[3] ?? 'pcs',
+                'unit_id' => $row[3] ?? null,
                 'stok_awal' => $row[4] ?? 0,
                 'stok_minimum' => $row[5] ?? 0,
                 'lokasi_rak' => $row[6] ?? null,
@@ -209,10 +231,10 @@ public function import(Request $request)
 
 public function qr(Product $product)
 {
-    activity_log(
-        'PRINT',
-        'QR BARANG',
-        'Mencetak QR barang '.$product->nama_barang
+    $product->load(
+        'brand',
+        'unit',
+        'warehouse'
     );
 
     return view('products.qr', compact('product'));

@@ -11,7 +11,9 @@ class StockCardController extends Controller
 {
     public function index(Request $request)
     {
-        $products = Product::orderBy('nama_barang')->get();
+        $products = Product::with('unit')
+            ->orderBy('nama_barang')
+            ->get();
 
         $product = null;
         $mutations = [];
@@ -19,7 +21,8 @@ class StockCardController extends Controller
 
         if ($request->product_id) {
 
-            $product = Product::findOrFail($request->product_id);
+            $product = Product::with('unit')
+                ->findOrFail($request->product_id);
 
             $saldo = $product->stok_awal;
 
@@ -31,7 +34,7 @@ class StockCardController extends Controller
                 'saldo' => $saldo,
             ];
 
-            $stockIns = StockInDetail::with('product')
+            $stockIns = StockInDetail::with('stockIn')
                 ->where('product_id', $product->id)
                 ->get();
 
@@ -40,7 +43,7 @@ class StockCardController extends Controller
                 $saldo += $item->qty;
 
                 $mutations[] = [
-                    'tanggal' => $item->created_at,
+                    'tanggal' => $item->stockIn->tanggal ?? $item->created_at,
                     'jenis' => 'STOK MASUK',
                     'masuk' => $item->qty,
                     'keluar' => 0,
@@ -48,7 +51,7 @@ class StockCardController extends Controller
                 ];
             }
 
-            $stockOuts = StockOutDetail::with('product')
+            $stockOuts = StockOutDetail::with('stockOut')
                 ->where('product_id', $product->id)
                 ->get();
 
@@ -57,7 +60,7 @@ class StockCardController extends Controller
                 $saldo -= $item->qty;
 
                 $mutations[] = [
-                    'tanggal' => $item->created_at,
+                    'tanggal' => $item->stockOut->tanggal ?? $item->created_at,
                     'jenis' => 'STOK KELUAR',
                     'masuk' => 0,
                     'keluar' => $item->qty,
@@ -68,16 +71,25 @@ class StockCardController extends Controller
             usort($mutations, function ($a, $b) {
                 return strtotime($a['tanggal']) <=> strtotime($b['tanggal']);
             });
+
+            $saldo = 0;
+
+            foreach ($mutations as $index => $row) {
+                if ($row['jenis'] == 'STOK AWAL') {
+                    $saldo = $row['masuk'];
+                } else {
+                    $saldo = $saldo + $row['masuk'] - $row['keluar'];
+                }
+
+                $mutations[$index]['saldo'] = $saldo;
+            }
         }
 
-        return view(
-            'stock_card.index',
-            compact(
-                'products',
-                'product',
-                'mutations',
-                'saldo'
-            )
-        );
+        return view('stock_card.index', compact(
+            'products',
+            'product',
+            'mutations',
+            'saldo'
+        ));
     }
 }

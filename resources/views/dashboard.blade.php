@@ -236,56 +236,64 @@
 
                 <table class="table table-bordered align-middle">
 
-                    <thead class="table-danger">
-                        <tr>
-                            <th>Kode</th>
-                            <th>Nama Barang</th>
-                            <th>Kategori</th>
-                            <th>Stok Aktual</th>
-                            <th>Stok Minimum</th>
-                            <th>Lokasi Rak</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
+    <thead class="table-danger">
+        <tr>
+            <th>Kode</th>
+            <th>Nama Barang</th>
+            <th>Kategori</th>
+            <th>Gudang</th>
+            <th>Satuan</th>
+            <th>Stok Aktual</th>
+            <th>Stok Minimum</th>
+            <th>Lokasi Rak</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
 
-                    <tbody>
+    <tbody>
 
-                        @foreach($stokMinimumProducts as $product)
+        @foreach($stokMinimumProducts as $product)
 
-                            <tr>
+            <tr>
+                <td>{{ $product->kode_barang }}</td>
 
-                                <td>{{ $product->kode_barang }}</td>
+                <td>{{ $product->nama_barang }}</td>
 
-                                <td>{{ $product->nama_barang }}</td>
+                <td>{{ $product->kategori ?? '-' }}</td>
 
-                                <td>{{ $product->kategori ?? '-' }}</td>
+                <td>{{ $product->warehouse->nama_gudang ?? '-' }}</td>
 
-                                <td>
-                                    <span class="badge bg-danger">
-                                        {{ $product->stok_aktual }}
-                                    </span>
-                                </td>
+                <td>
+                    {{ $product->unit->nama_satuan ?? '-' }}
 
-                                <td>{{ $product->stok_minimum }}</td>
+                    @if($product->unit && $product->unit->kode)
+                        ({{ $product->unit->kode }})
+                    @endif
+                </td>
 
-                                <td>{{ $product->lokasi_rak ?? '-' }}</td>
+                <td>
+                    <span class="badge bg-danger">
+                        {{ $product->stok_aktual }}
+                    </span>
+                </td>
 
-                                <td>
+                <td>{{ $product->stok_minimum }}</td>
 
-                                    <a href="/products/{{ $product->id }}"
-                                       class="btn btn-primary btn-sm">
-                                        Detail
-                                    </a>
+                <td>{{ $product->lokasi_rak ?? '-' }}</td>
 
-                                </td>
+                <td>
+                    <a href="/products/{{ $product->id }}"
+                       class="btn btn-primary btn-sm">
+                        Detail
+                    </a>
+                </td>
+            </tr>
 
-                            </tr>
+        @endforeach
 
-                        @endforeach
+    </tbody>
 
-                    </tbody>
-
-                </table>
+</table>
 
             </div>
 

@@ -1,30 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Stock Opname - Dynagear Stock</title>
+@extends('layouts.app')
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@section('title', 'Judul Halaman')
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+@section('content')
 
-<nav class="navbar navbar-dark bg-primary">
-    <div class="container">
-
-        <a href="/dashboard"
-           class="navbar-brand">
-            Dynagear Stock
-        </a>
-
-        <a href="/stock-opname/create"
-           class="btn btn-light btn-sm">
-            + Stock Opname
-        </a>
-
-    </div>
-</nav>
 
 <div class="container mt-4 mb-5">
 
@@ -156,5 +135,4 @@
 
 </div>
 
-</body>
-</html>
+@endsection

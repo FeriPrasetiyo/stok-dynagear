@@ -7,20 +7,32 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     protected $fillable = [
-        'warehouse_id',
         'kode_barang',
         'nama_barang',
         'kategori',
-        'satuan',
+        'brand_id',
+        'unit_id',
+        'warehouse_id',
         'stok_awal',
         'stok_minimum',
         'lokasi_rak',
-        'keterangan',
         'foto',
+        'keterangan',
     ];
 
     public function warehouse()
     {
         return $this->belongsTo(Warehouse::class);
+    }
+
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
+    // TAMBAHKAN INI
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
     }
 }

@@ -10,14 +10,44 @@ use Illuminate\Support\Facades\DB;
 
 class PurchaseOrderController extends Controller
 {
-    public function index()
-    {
-        $purchaseOrders = PurchaseOrder::with('supplier')
-            ->latest()
-            ->paginate(10);
+    public function index(Request $request)
+{
+    $purchaseOrders = PurchaseOrder::with('supplier')
 
-        return view('purchase_orders.index', compact('purchaseOrders'));
-    }
+        ->when($request->search, function ($query) use ($request) {
+
+            $query->where(function ($q) use ($request) {
+
+                $q->where('nomor_po', 'like', '%'.$request->search.'%')
+                  ->orWhere('status', 'like', '%'.$request->search.'%')
+                  ->orWhereHas('supplier', function ($supplierQuery) use ($request) {
+                      $supplierQuery->where(
+                          'nama_supplier',
+                          'like',
+                          '%'.$request->search.'%'
+                      );
+                  });
+
+            });
+
+        })
+
+        ->when($request->start_date, function ($query) use ($request) {
+            $query->whereDate('tanggal', '>=', $request->start_date);
+        })
+
+        ->when($request->end_date, function ($query) use ($request) {
+            $query->whereDate('tanggal', '<=', $request->end_date);
+        })
+
+        ->latest()
+        ->paginate(10);
+
+    return view(
+        'purchase_orders.index',
+        compact('purchaseOrders')
+    );
+}
 
     public function create()
     {

@@ -22,6 +22,7 @@
     </div>
 
     <div class="card-body">
+
         <table class="table table-bordered">
             <tr>
                 <th width="200">No Request</th>
@@ -47,11 +48,17 @@
                 <th>Status</th>
                 <td>
                     @if($itemRequest->status == 'pending')
-                        <span class="badge bg-warning text-dark">Pending</span>
+                        <span class="badge bg-warning text-dark">
+                            Pending
+                        </span>
                     @elseif($itemRequest->status == 'approved')
-                        <span class="badge bg-success">Approved</span>
+                        <span class="badge bg-success">
+                            Approved
+                        </span>
                     @else
-                        <span class="badge bg-danger">Rejected</span>
+                        <span class="badge bg-danger">
+                            Rejected
+                        </span>
                     @endif
                 </td>
             </tr>
@@ -62,7 +69,10 @@
             </tr>
         </table>
 
-        @if($itemRequest->status == 'pending')
+        @if(
+            $itemRequest->status == 'pending' &&
+            in_array(auth()->user()->role, ['admin', 'manager'])
+        )
             <form action="/item-requests/{{ $itemRequest->id }}/approve"
                   method="POST"
                   class="d-inline">
@@ -87,6 +97,7 @@
         <a href="/item-requests" class="btn btn-secondary">
             Kembali
         </a>
+
     </div>
 </div>
 
@@ -96,23 +107,54 @@
     </div>
 
     <div class="table-responsive">
+
+        @php
+            $totalQty = 0;
+        @endphp
+
         <table class="table table-bordered mb-0">
             <thead class="table-success">
                 <tr>
                     <th>Kode</th>
                     <th>Nama Barang</th>
+                    <th>Satuan</th>
                     <th>Qty Request</th>
                 </tr>
             </thead>
 
             <tbody>
                 @foreach($itemRequest->details as $detail)
+
+                    @php
+                        $totalQty += $detail->qty;
+                    @endphp
+
                     <tr>
-                        <td>{{ $detail->product->kode_barang }}</td>
-                        <td>{{ $detail->product->nama_barang }}</td>
+                        <td>{{ $detail->product->kode_barang ?? '-' }}</td>
+
+                        <td>{{ $detail->product->nama_barang ?? '-' }}</td>
+
+                        <td>
+                            {{ $detail->product->unit->nama_satuan ?? '-' }}
+
+                            @if($detail->product && $detail->product->unit && $detail->product->unit->kode)
+                                ({{ $detail->product->unit->kode }})
+                            @endif
+                        </td>
+
                         <td>{{ $detail->qty }}</td>
                     </tr>
+
                 @endforeach
+
+                <tr>
+                    <th colspan="3" class="text-end">
+                        Total Qty
+                    </th>
+                    <th>
+                        {{ $totalQty }}
+                    </th>
+                </tr>
             </tbody>
         </table>
     </div>

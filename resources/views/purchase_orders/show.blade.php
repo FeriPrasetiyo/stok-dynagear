@@ -38,47 +38,56 @@
 
         <div class="mt-3">
 
-            @if($purchaseOrder->status == 'draft')
-                <form action="/purchase-orders/{{ $purchaseOrder->id }}/approve"
-                      method="POST"
-                      class="d-inline">
-                    @csrf
+    @if(
+        $purchaseOrder->status == 'draft' &&
+        in_array(auth()->user()->role, ['admin', 'manager'])
+    )
+        <form action="/purchase-orders/{{ $purchaseOrder->id }}/approve"
+              method="POST"
+              class="d-inline">
+            @csrf
 
-                    <button class="btn btn-success">
-                        Approve PO
-                    </button>
-                </form>
-            @endif
+            <button class="btn btn-success">
+                Approve PO
+            </button>
+        </form>
+    @endif
 
-            @if($purchaseOrder->status == 'approved')
-                <form action="/purchase-orders/{{ $purchaseOrder->id }}/receive"
-                      method="POST"
-                      class="d-inline">
-                    @csrf
+    @if(
+        $purchaseOrder->status == 'approved' &&
+        in_array(auth()->user()->role, ['admin', 'manager', 'purchasing'])
+    )
+        <form action="/purchase-orders/{{ $purchaseOrder->id }}/receive"
+              method="POST"
+              class="d-inline">
+            @csrf
 
-                    <button class="btn btn-primary">
-                        Terima Barang / Receive
-                    </button>
-                </form>
-            @endif
+            <button class="btn btn-primary">
+                Terima Barang / Receive
+            </button>
+        </form>
+    @endif
 
-            @if($purchaseOrder->status != 'received')
-                <form action="/purchase-orders/{{ $purchaseOrder->id }}/cancel"
-                      method="POST"
-                      class="d-inline">
-                    @csrf
+    @if(
+        $purchaseOrder->status != 'received' &&
+        in_array(auth()->user()->role, ['admin', 'manager'])
+    )
+        <form action="/purchase-orders/{{ $purchaseOrder->id }}/cancel"
+              method="POST"
+              class="d-inline">
+            @csrf
 
-                    <button class="btn btn-danger">
-                        Cancel PO
-                    </button>
-                </form>
-            @endif
+            <button class="btn btn-danger">
+                Cancel PO
+            </button>
+        </form>
+    @endif
 
-            <a href="/purchase-orders" class="btn btn-secondary">
-                Kembali
-            </a>
+    <a href="/purchase-orders" class="btn btn-secondary">
+        Kembali
+    </a>
 
-        </div>
+</div>
 
     </div>
 

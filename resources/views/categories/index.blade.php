@@ -1,23 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Kategori Barang - Dynagear Stock</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.app')
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+@section('title', 'Kategori Barang')
 
-<nav class="navbar navbar-dark bg-primary">
-    <div class="container">
-        <a href="/dashboard" class="navbar-brand">Dynagear Stock</a>
-
-        <a href="/categories/create" class="btn btn-light btn-sm">
-            + Tambah Kategori
-        </a>
-    </div>
-</nav>
+@section('content')
 
 <div class="container mt-4 mb-5">
 
@@ -81,6 +66,4 @@
     </div>
 
 </div>
-
-</body>
-</html>
+@endsection

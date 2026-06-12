@@ -9,14 +9,28 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+public function up(): void
 {
     Schema::create('stock_in_details', function (Blueprint $table) {
+
         $table->id();
-        $table->foreignId('stock_in_id')->constrained()->cascadeOnDelete();
-        $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+
+        $table->unsignedBigInteger('stock_in_id');
+        $table->unsignedBigInteger('product_id');
+
         $table->integer('qty');
+
         $table->timestamps();
+
+        $table->foreign('stock_in_id')
+            ->references('id')
+            ->on('stock_ins')
+            ->onDelete('cascade');
+
+        $table->foreign('product_id')
+            ->references('id')
+            ->on('products')
+            ->onDelete('cascade');
     });
 }
 

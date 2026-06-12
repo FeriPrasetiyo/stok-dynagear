@@ -77,7 +77,7 @@ class StockReportController extends Controller
 
 public function print()
 {
-    $products = \App\Models\Product::orderBy('nama_barang')->get();
+    $products = Product::with(['warehouse','brand','unit'])->get();
 
     foreach ($products as $product) {
         $stockIn = \App\Models\StockInDetail::where('product_id', $product->id)->sum('qty');
@@ -99,7 +99,7 @@ public function print()
 
 public function pdf()
 {
-    $products = \App\Models\Product::orderBy('nama_barang')->get();
+    $products = Product::with(['warehouse','brand','unit'])->get();
 
     foreach ($products as $product) {
         $stockIn = \App\Models\StockInDetail::where('product_id', $product->id)->sum('qty');

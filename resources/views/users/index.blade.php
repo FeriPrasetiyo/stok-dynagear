@@ -47,6 +47,9 @@
                         @elseif($user->role == 'gudang')
                             <span class="badge bg-success">Gudang</span>
 
+                        @elseif($user->role == 'purchasing')
+                            <span class="badge bg-info">Purchasing</span>
+
                         @else
                             <span class="badge bg-primary">Sales</span>
                         @endif
