@@ -36,17 +36,26 @@ class DashboardController extends Controller
         $stokMinimumProducts = [];
 
         foreach ($products as $product) {
+
             $stokAktual = $this->currentStock($product->id);
 
             $totalStok += $stokAktual;
 
-            if ($stokAktual <= $product->stok_minimum) {
+            // Barang stok 0 tidak ditampilkan di dashboard
+            if ($stokAktual > 0 && $stokAktual <= $product->stok_minimum) {
+
                 $product->stok_aktual = $stokAktual;
+
                 $stokMinimumProducts[] = $product;
+
             }
         }
 
-        $stokMinimumCount = count($stokMinimumProducts);
+        $stokMinimumProducts = collect($stokMinimumProducts)
+            ->sortBy('stok_aktual')
+            ->take(10);
+
+        $stokMinimumCount = $stokMinimumProducts->count();
 
         $stokMasukHariIni = StockIn::whereDate('tanggal', date('Y-m-d'))->count();
 
