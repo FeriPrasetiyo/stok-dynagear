@@ -4,9 +4,12 @@
 
 @section('content')
 
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet">
+
 <div class="container mt-4">
 
-    <div class="card shadow">
+    <div class="card shadow border-0">
 
         <div class="card-header bg-warning">
 
@@ -37,28 +40,37 @@
 
                 @csrf
 
-                <div class="mb-3">
+                <div class="row">
 
-                    <label>Tanggal</label>
+                    <div class="col-md-6 mb-3">
 
-                    <input type="date"
-                           name="tanggal"
-                           value="{{ date('Y-m-d') }}"
-                           class="form-control"
-                           required>
+                        <label class="form-label">
+                            Tanggal
+                        </label>
+
+                        <input type="date"
+                               name="tanggal"
+                               value="{{ date('Y-m-d') }}"
+                               class="form-control"
+                               required>
+
+                    </div>
 
                 </div>
 
                 <div class="mb-3">
 
-                    <label>Barang</label>
+                    <label class="form-label">
+                        Cari Barang
+                    </label>
 
                     <select name="product_id"
+                            id="product_id"
                             class="form-control"
                             required>
 
                         <option value="">
-                            Pilih Barang
+                            Cari kode atau nama barang...
                         </option>
 
                         @foreach($products as $product)
@@ -68,6 +80,10 @@
                                 {{ $product->kode_barang }}
                                 -
                                 {{ $product->nama_barang }}
+
+                                @if($product->unit)
+                                    ({{ $product->unit->nama_satuan }})
+                                @endif
 
                             </option>
 
@@ -79,33 +95,45 @@
 
                 <div class="mb-3">
 
-                    <label>Stok Fisik</label>
+                    <label class="form-label">
+                        Stok Fisik
+                    </label>
 
                     <input type="number"
                            name="stok_fisik"
                            class="form-control"
                            min="0"
+                           placeholder="Masukkan stok hasil perhitungan fisik"
                            required>
 
                 </div>
 
                 <div class="mb-4">
 
-                    <label>Keterangan</label>
+                    <label class="form-label">
+                        Keterangan
+                    </label>
 
                     <textarea name="keterangan"
                               rows="3"
-                              class="form-control"></textarea>
+                              class="form-control"
+                              placeholder="Catatan stock opname (opsional)"></textarea>
 
                 </div>
 
+                <hr>
+
                 <button class="btn btn-warning">
-                    Simpan
+
+                    Simpan Stock Opname
+
                 </button>
 
                 <a href="/stock-opname"
                    class="btn btn-secondary">
+
                     Batal
+
                 </a>
 
             </form>
@@ -116,4 +144,26 @@
 
 </div>
 
-@endsection
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+
+$(document).ready(function(){
+
+    $('#product_id').select2({
+
+        placeholder: 'Cari kode atau nama barang...',
+
+        allowClear: true,
+
+        width: '100%'
+
+    });
+
+});
+
+</script>
+
+@endsections
