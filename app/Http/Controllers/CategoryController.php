@@ -22,13 +22,13 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_kategori' => 'required',
+            'nama_category' => 'required',
         ]);
 
         Category::create($request->all());
 
         return redirect('/categories')
-            ->with('success', 'Kategori berhasil ditambahkan');
+            ->with('success', 'category berhasil ditambahkan');
     }
 
     public function edit(Category $category)
@@ -39,13 +39,13 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $request->validate([
-            'nama_kategori' => 'required',
+            'nama_category' => 'required',
         ]);
 
         $category->update($request->all());
 
         return redirect('/categories')
-            ->with('success', 'Kategori berhasil diupdate');
+            ->with('success', 'category berhasil diupdate');
     }
 
     public function destroy(Category $category)
@@ -53,6 +53,6 @@ class CategoryController extends Controller
         $category->delete();
 
         return redirect('/categories')
-            ->with('success', 'Kategori berhasil dihapus');
+            ->with('success', 'category berhasil dihapus');
     }
 }

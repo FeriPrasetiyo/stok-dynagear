@@ -41,7 +41,7 @@ class StockReportController extends Controller
         fputcsv($file, [
             'Kode Barang',
             'Nama Barang',
-            'Kategori',
+            'category',
             'Stok Awal',
             'Masuk',
             'Keluar',
@@ -59,7 +59,7 @@ class StockReportController extends Controller
             fputcsv($file, [
                 $product->kode_barang,
                 $product->nama_barang,
-                $product->kategori ?? '-',
+                $product->category ?? '-',
                 $product->stok_awal,
                 $stockIn,
                 $stockOut,

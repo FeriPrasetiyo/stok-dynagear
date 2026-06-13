@@ -12,7 +12,7 @@ return new class extends Migration
 
             $table->id();
 
-            $table->string('nama_kategori');
+            $table->string('nama_category');
 
             $table->text('keterangan')->nullable();
 

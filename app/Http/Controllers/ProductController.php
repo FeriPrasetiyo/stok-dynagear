@@ -21,7 +21,7 @@ class ProductController extends Controller
         ->when($search, function ($query) use ($search) {
             $query->where('kode_barang', 'like', "%{$search}%")
                 ->orWhere('nama_barang', 'like', "%{$search}%")
-                ->orWhere('kategori', 'like', "%{$search}%");
+                ->orWhere('category', 'like', "%{$search}%");
         })
         ->latest()
         ->paginate(10);
@@ -33,7 +33,7 @@ class ProductController extends Controller
 {
     $warehouses = Warehouse::orderBy('nama_gudang')->get();
     $brands = Brand::orderBy('nama_merek')->get();
-    $categories = Category::orderBy('nama_kategori')->get();
+    $categories = Category::orderBy('nama_category')->get();
     $units = Unit::orderBy('nama_satuan')->get();
 
     return view('products.create', compact(
@@ -52,7 +52,7 @@ class ProductController extends Controller
         'unit_id' => 'required|exists:units,id',
         'kode_barang' => 'required|unique:products,kode_barang',
         'nama_barang' => 'required',
-        'kategori' => 'nullable',
+        'category' => 'nullable',
         'stok_awal' => 'required|numeric|min:0',
         'stok_minimum' => 'required|numeric|min:0',
         'lokasi_rak' => 'nullable',
@@ -64,7 +64,7 @@ class ProductController extends Controller
         'warehouse_id',
         'kode_barang',
         'nama_barang',
-        'kategori',
+        'category',
         'brand_id',
         'unit_id',
         'stok_awal',
@@ -120,7 +120,7 @@ public function edit(Product $product)
 {
     $warehouses = Warehouse::orderBy('nama_gudang')->get();
     $brands = Brand::orderBy('nama_merek')->get();
-    $categories = Category::orderBy('nama_kategori')->get();
+    $categories = Category::orderBy('nama_category')->get();
     $units = Unit::orderBy('nama_satuan')->get();
 
     return view('products.edit', compact(
@@ -140,7 +140,7 @@ public function edit(Product $product)
         'unit_id' => 'required|exists:units,id',
         'kode_barang' => 'required|unique:products,kode_barang,' . $product->id,
         'nama_barang' => 'required',
-        'kategori' => 'nullable',
+        'category' => 'nullable',
         'stok_awal' => 'required|numeric|min:0',
         'stok_minimum' => 'required|numeric|min:0',
         'lokasi_rak' => 'nullable',
@@ -152,7 +152,7 @@ public function edit(Product $product)
         'warehouse_id',
         'kode_barang',
         'nama_barang',
-        'kategori',
+        'category',
         'brand_id',
         'unit_id',
         'stok_awal',
@@ -208,7 +208,7 @@ public function import(Request $request)
             ['kode_barang' => $row[0]],
             [
                 'nama_barang' => $row[1],
-                'kategori' => $row[2] ?? null,
+                'category' => $row[2] ?? null,
                 'unit_id' => $row[3] ?? null,
                 'stok_awal' => $row[4] ?? 0,
                 'stok_minimum' => $row[5] ?? 0,

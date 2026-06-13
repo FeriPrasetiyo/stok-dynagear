@@ -12,7 +12,7 @@ class Product extends Model
         'unit_id',
         'kode_barang',
         'nama_barang',
-        'kategori',
+        'category',
         'stok_awal',
         'stok_minimum',
         'lokasi_rak',
