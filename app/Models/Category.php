@@ -10,4 +10,8 @@ class Category extends Model
         'nama_kategori',
         'keterangan',
     ];
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }

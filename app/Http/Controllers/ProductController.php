@@ -45,44 +45,44 @@ class ProductController extends Controller
 }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'warehouse_id' => 'nullable|exists:warehouses,id',
-            'kode_barang' => 'required|unique:products,kode_barang',
-            'nama_barang' => 'required',
-            'kategori' => 'nullable',
-            'brand_id' => 'nullable|exists:brands,id',
-            'unit_id' => 'required|exists:units,id',
-            'stok_awal' => 'required|numeric|min:0',
-            'stok_minimum' => 'required|numeric|min:0',
-            'lokasi_rak' => 'nullable',
-            'keterangan' => 'nullable',
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+{
+    $request->validate([
+        'warehouse_id' => 'nullable|exists:warehouses,id',
+        'brand_id' => 'nullable|exists:brands,id',
+        'unit_id' => 'required|exists:units,id',
+        'kode_barang' => 'required|unique:products,kode_barang',
+        'nama_barang' => 'required',
+        'kategori' => 'nullable',
+        'stok_awal' => 'required|numeric|min:0',
+        'stok_minimum' => 'required|numeric|min:0',
+        'lokasi_rak' => 'nullable',
+        'keterangan' => 'nullable',
+        'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
 
-        $data = $request->only([
-            'warehouse_id',
-            'kode_barang',
-            'nama_barang',
-            'kategori',
-            'brand_id',
-            'unit_id',
-            'stok_awal',
-            'stok_minimum',
-            'lokasi_rak',
-            'keterangan',
-        ]);
+    $data = $request->only([
+        'warehouse_id',
+        'kode_barang',
+        'nama_barang',
+        'kategori',
+        'brand_id',
+        'unit_id',
+        'stok_awal',
+        'stok_minimum',
+        'lokasi_rak',
+        'keterangan',
+    ]);
 
-        if ($request->hasFile('foto')) {
-            $data['foto'] = $request->file('foto')
-                ->store('products', 'public');
-        }
-
-        Product::create($data);
-
-        return redirect('/products')
-            ->with('success', 'Barang berhasil ditambahkan');
+    if ($request->hasFile('foto')) {
+        $data['foto'] = $request->file('foto')
+            ->store('products', 'public');
     }
+
+    Product::create($data);
+
+    return redirect('/products')
+        ->with('success', 'Barang berhasil ditambahkan');
+}
 
     public function show(Product $product)
 {
@@ -133,49 +133,49 @@ public function edit(Product $product)
 }
 
     public function update(Request $request, Product $product)
-    {
-        $request->validate([
-            'warehouse_id' => 'nullable|exists:warehouses,id',
-            'kode_barang' => 'required|unique:products,kode_barang,' . $product->id,
-            'nama_barang' => 'required',
-            'kategori' => 'nullable',
-            'brand_id' => 'nullable|exists:brands,id',
-            'unit_id' => 'required|exists:units,id',
-            'stok_awal' => 'required|numeric|min:0',
-            'stok_minimum' => 'required|numeric|min:0',
-            'lokasi_rak' => 'nullable',
-            'keterangan' => 'nullable',
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+{
+    $request->validate([
+        'warehouse_id' => 'nullable|exists:warehouses,id',
+        'brand_id' => 'nullable|exists:brands,id',
+        'unit_id' => 'required|exists:units,id',
+        'kode_barang' => 'required|unique:products,kode_barang,' . $product->id,
+        'nama_barang' => 'required',
+        'kategori' => 'nullable',
+        'stok_awal' => 'required|numeric|min:0',
+        'stok_minimum' => 'required|numeric|min:0',
+        'lokasi_rak' => 'nullable',
+        'keterangan' => 'nullable',
+        'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
 
-        $data = $request->only([
-            'warehouse_id',
-            'kode_barang',
-            'nama_barang',
-            'kategori',
-            'brand_id',
-            'unit_id',
-            'stok_awal',
-            'stok_minimum',
-            'lokasi_rak',
-            'keterangan',
-        ]);
+    $data = $request->only([
+        'warehouse_id',
+        'kode_barang',
+        'nama_barang',
+        'kategori',
+        'brand_id',
+        'unit_id',
+        'stok_awal',
+        'stok_minimum',
+        'lokasi_rak',
+        'keterangan',
+    ]);
 
-        if ($request->hasFile('foto')) {
+    if ($request->hasFile('foto')) {
 
-            if ($product->foto) {
-                Storage::disk('public')->delete($product->foto);
-            }
-
-            $data['foto'] = $request->file('foto')
-                ->store('products', 'public');
+        if ($product->foto) {
+            Storage::disk('public')->delete($product->foto);
         }
 
-        $product->update($data);
-
-        return redirect('/products')
-            ->with('success', 'Barang berhasil diupdate');
+        $data['foto'] = $request->file('foto')
+            ->store('products', 'public');
     }
+
+    $product->update($data);
+
+    return redirect('/products')
+        ->with('success', 'Barang berhasil diupdate');
+}   
 
     public function destroy(Product $product)
     {

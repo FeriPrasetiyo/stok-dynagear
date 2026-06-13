@@ -23,4 +23,5 @@ class PurchaseOrder extends Model
     {
         return $this->hasMany(PurchaseOrderDetail::class);
     }
+    
 }

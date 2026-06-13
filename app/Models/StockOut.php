@@ -18,9 +18,9 @@ class StockOut extends Model
     {
         return $this->hasMany(StockOutDetail::class);
     }
-    
+
     public function warehouse()
-{
-    return $this->belongsTo(Warehouse::class);
-}
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
 }

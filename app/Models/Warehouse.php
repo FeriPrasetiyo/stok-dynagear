@@ -11,4 +11,19 @@ class Warehouse extends Model
         'lokasi',
         'keterangan',
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    public function stockIns()
+    {
+        return $this->hasMany(StockIn::class);
+    }
+
+    public function stockOuts()
+    {
+        return $this->hasMany(StockOut::class);
+    }
 }

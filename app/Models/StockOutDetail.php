@@ -12,12 +12,13 @@ class StockOutDetail extends Model
         'qty',
     ];
 
+    public function stockOut()
+    {
+        return $this->belongsTo(StockOut::class);
+    }
+
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
-    public function stockOut()
-{
-    return $this->belongsTo(StockOut::class);
-}
 }

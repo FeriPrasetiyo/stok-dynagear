@@ -13,4 +13,8 @@ class Supplier extends Model
         'alamat',
         'keterangan',
     ];
+    public function stockIns()
+    {
+        return $this->hasMany(StockIn::class, 'supplier', 'nama_supplier');
+    }
 }

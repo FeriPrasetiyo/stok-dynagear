@@ -9,7 +9,7 @@ class Unit extends Model
     protected $fillable = [
         'nama_satuan',
         'kode',
-        'keterangan'
+        'keterangan',
     ];
 
     public function products()

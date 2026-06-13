@@ -12,12 +12,13 @@ class StockInDetail extends Model
         'qty',
     ];
 
+    public function stockIn()
+    {
+        return $this->belongsTo(StockIn::class);
+    }
+
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
-    public function stockIn()
-{
-    return $this->belongsTo(StockIn::class);
-}
 }
