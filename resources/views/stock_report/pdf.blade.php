@@ -63,7 +63,7 @@
             <th>No</th>
             <th>Kode</th>
             <th>Nama Barang</th>
-            <th>Kategori</th>
+            <th>category</th>
             <th>Merek</th>
             <th>Satuan</th>
             <th>Gudang</th>
@@ -94,7 +94,7 @@
                 </td>
 
                 <td>
-                    {{ $product->kategori ?? '-' }}
+                    {{ $product->category ?? '-' }}
                 </td>
 
                 <td>

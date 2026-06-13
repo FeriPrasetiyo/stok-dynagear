@@ -58,8 +58,8 @@
                         </tr>
 
                         <tr>
-                            <th>Kategori</th>
-                            <td>{{ $product->kategori ?? '-' }}</td>
+                            <th>category</th>
+                            <td>{{ $product->category ?? '-' }}</td>
                         </tr>
 
                         <tr>

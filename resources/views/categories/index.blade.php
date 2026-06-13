@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Kategori Barang')
+@section('title', 'category Barang')
 
 @section('content')
 
@@ -8,17 +8,17 @@
 
     <div>
         <h3 class="fw-bold mb-1">
-            Kategori Barang
+            category Barang
         </h3>
 
         <p class="text-muted mb-0">
-            Data kategori master barang
+            Data category master barang
         </p>
     </div>
 
     <a href="/categories/create"
        class="btn btn-success">
-        + Tambah Kategori
+        + Tambah category
     </a>
 
 </div>
@@ -31,7 +31,7 @@
 
             <thead class="table-primary">
                 <tr>
-                    <th>Nama Kategori</th>
+                    <th>Nama category</th>
                     <th>Keterangan</th>
                     <th width="180">Aksi</th>
                 </tr>
@@ -42,7 +42,7 @@
                 @forelse($categories as $category)
 
                     <tr>
-                        <td>{{ $category->nama_kategori }}</td>
+                        <td>{{ $category->nama_category }}</td>
 
                         <td>{{ $category->keterangan ?? '-' }}</td>
 
@@ -55,7 +55,7 @@
                             <form action="/categories/{{ $category->id }}"
                                   method="POST"
                                   class="d-inline"
-                                  onsubmit="return confirm('Hapus kategori ini?')">
+                                  onsubmit="return confirm('Hapus category ini?')">
 
                                 @csrf
                                 @method('DELETE')
@@ -73,7 +73,7 @@
                     <tr>
                         <td colspan="3"
                             class="text-center py-4">
-                            Belum ada kategori.
+                            Belum ada category.
                         </td>
                     </tr>
 

@@ -13,7 +13,7 @@
 
         <p>Format CSV:</p>
 
-        <pre class="bg-light p-3 border rounded">kode_barang,nama_barang,kategori,satuan,stok_awal,stok_minimum,lokasi_rak,keterangan
+        <pre class="bg-light p-3 border rounded">kode_barang,nama_barang,category,satuan,stok_awal,stok_minimum,lokasi_rak,keterangan
 BRG001,Bearing 6204,Sparepart,pcs,100,10,Rak A1,Keterangan barang</pre>
 
         @if($errors->any())

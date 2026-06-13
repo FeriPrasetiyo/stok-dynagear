@@ -70,8 +70,8 @@
             </p>
 
             <p class="mb-1">
-                <strong>Kategori:</strong>
-                {{ $product->kategori ?? '-' }}
+                <strong>category:</strong>
+                {{ $product->category ?? '-' }}
             </p>
 
             <p class="mb-1">

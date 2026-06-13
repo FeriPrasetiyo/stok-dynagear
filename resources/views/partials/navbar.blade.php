@@ -69,7 +69,7 @@
                         <li>
                             <a class="dropdown-item"
                                href="/categories">
-                                Kategori
+                                category
                             </a>
                         </li>
 

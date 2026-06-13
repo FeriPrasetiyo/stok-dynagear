@@ -77,20 +77,20 @@
 
                 <div class="mb-3">
                     <label class="form-label">
-                        Kategori
+                        category
                     </label>
 
-                    <select name="kategori"
+                    <select name="category"
                             class="form-control">
 
                         <option value="">
-                            Pilih Kategori
+                            Pilih category
                         </option>
 
                         @foreach($categories as $category)
-                            <option value="{{ $category->nama_kategori }}"
-                                {{ old('kategori', $product->kategori) == $category->nama_kategori ? 'selected' : '' }}>
-                                {{ $category->nama_kategori }}
+                            <option value="{{ $category->nama_category }}"
+                                {{ old('category', $product->category) == $category->nama_category ? 'selected' : '' }}>
+                                {{ $category->nama_category }}
                             </option>
                         @endforeach
 

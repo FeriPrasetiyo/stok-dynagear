@@ -123,7 +123,7 @@
                 <th>No</th>
                 <th>Kode</th>
                 <th>Nama Barang</th>
-                <th>Kategori</th>
+                <th>category</th>
                 <th>Stok Awal</th>
                 <th>Masuk</th>
                 <th>Keluar</th>
@@ -152,7 +152,7 @@
                 </td>
 
                 <td>
-                    {{ $product->kategori ?? '-' }}
+                    {{ $product->category ?? '-' }}
                 </td>
 
                 <td class="text-end">

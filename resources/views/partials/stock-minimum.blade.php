@@ -17,7 +17,7 @@
                         <tr>
                             <th>Kode</th>
                             <th>Nama Barang</th>
-                            <th>Kategori</th>
+                            <th>category</th>
                             <th>Stok Aktual</th>
                             <th>Stok Minimum</th>
                             <th>Lokasi Rak</th>
@@ -41,7 +41,7 @@
                                 </td>
 
                                 <td>
-                                    {{ $product->kategori ?? '-' }}
+                                    {{ $product->category ?? '-' }}
                                 </td>
 
                                 <td>

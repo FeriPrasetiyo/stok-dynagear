@@ -1,17 +1,17 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Kategori')
+@section('title', 'Edit category')
 
 @section('content')
 
 <div class="mb-3">
 
     <h3 class="fw-bold">
-        Edit Kategori
+        Edit category
     </h3>
 
     <p class="text-muted mb-0">
-        Ubah data kategori barang
+        Ubah data category barang
     </p>
 
 </div>
@@ -21,7 +21,7 @@
     <div class="card-header bg-warning">
 
         <h4 class="mb-0">
-            Edit Kategori
+            Edit category
         </h4>
 
     </div>
@@ -51,13 +51,13 @@
             <div class="mb-3">
 
                 <label class="form-label">
-                    Nama Kategori
+                    Nama category
                 </label>
 
                 <input type="text"
-                       name="nama_kategori"
+                       name="nama_category"
                        class="form-control"
-                       value="{{ old('nama_kategori', $category->nama_kategori) }}"
+                       value="{{ old('nama_category', $category->nama_category) }}"
                        required>
 
             </div>

@@ -45,7 +45,7 @@
                     <input type="text"
                            name="search"
                            class="form-control"
-                           placeholder="Cari kode / nama / kategori..."
+                           placeholder="Cari kode / nama / category..."
                            value="{{ request('search') }}">
 
                     <button class="btn btn-primary">
@@ -90,8 +90,8 @@
                         </h5>
 
                         <p class="mb-1">
-    <strong>Kategori:</strong>
-    {{ $product->kategori ?? '-' }}
+    <strong>category:</strong>
+    {{ $product->category ?? '-' }}
 </p>
 
 <p class="mb-1">

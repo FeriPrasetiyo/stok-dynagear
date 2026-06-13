@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Kategori')
+@section('title', 'Tambah category')
 
 @section('content')
 
@@ -8,7 +8,7 @@
     
 <div class="card-header bg-success text-white">
     <h4 class="mb-0">
-        Tambah Kategori
+        Tambah category
     </h4>
 </div>
 
@@ -21,13 +21,13 @@
         <div class="mb-3">
 
             <label class="form-label">
-                Nama Kategori
+                Nama category
             </label>
 
             <input type="text"
-                   name="nama_kategori"
+                   name="nama_category"
                    class="form-control"
-                   value="{{ old('nama_kategori') }}"
+                   value="{{ old('nama_category') }}"
                    placeholder="Contoh: Sparepart"
                    required>
 

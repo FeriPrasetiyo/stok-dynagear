@@ -46,9 +46,9 @@
                 <table class="table table-bordered">
 
                     <tr>
-                        <th width="35%">Kategori</th>
+                        <th width="35%">category</th>
                         <td>
-                            {{ $product->kategori ?? '-' }}
+                            {{ $product->category ?? '-' }}
                         </td>
                     </tr>
 

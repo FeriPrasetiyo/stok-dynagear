@@ -32,7 +32,7 @@
                     <tr>
                         <th>Kode</th>
                         <th>Nama Barang</th>
-                        <th>Kategori</th>
+                        <th>category</th>
                         <th>Stok Awal</th>
                         <th>Masuk</th>
                         <th>Keluar</th>
@@ -50,7 +50,7 @@
 
                             <td>{{ $product->nama_barang }}</td>
 
-                            <td>{{ $product->kategori ?? '-' }}</td>
+                            <td>{{ $product->category ?? '-' }}</td>
 
                             <td>{{ $product->stok_awal }}</td>
 
