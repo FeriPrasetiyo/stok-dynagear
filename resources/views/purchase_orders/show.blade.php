@@ -54,21 +54,6 @@
     @endif
 
     @if(
-        $purchaseOrder->status == 'approved' &&
-        in_array(auth()->user()->role, ['admin', 'manager', 'purchasing'])
-    )
-        <form action="/purchase-orders/{{ $purchaseOrder->id }}/receive"
-              method="POST"
-              class="d-inline">
-            @csrf
-
-            <button class="btn btn-primary">
-                Terima Barang / Receive
-            </button>
-        </form>
-    @endif
-
-    @if(
         $purchaseOrder->status != 'received' &&
         in_array(auth()->user()->role, ['admin', 'manager'])
     )
@@ -99,31 +84,78 @@
         Detail Barang
     </div>
 
-    <div class="table-responsive">
+    <div class="card-body">
 
-        <table class="table table-bordered mb-0">
+        @if(
+            $purchaseOrder->status == 'approved' &&
+            in_array(auth()->user()->role, ['admin', 'manager', 'purchasing'])
+        )
+            <form action="/purchase-orders/{{ $purchaseOrder->id }}/receive"
+                  method="POST">
+                @csrf
+        @endif
 
-            <thead>
-                <tr>
-                    <th>Kode</th>
-                    <th>Nama Barang</th>
-                    <th>Qty</th>
-                    <th>Received</th>
-                </tr>
-            </thead>
+        <div class="table-responsive">
 
-            <tbody>
-                @foreach($purchaseOrder->details as $detail)
+            <table class="table table-bordered mb-0">
+
+                <thead>
                     <tr>
-                        <td>{{ $detail->product->kode_barang }}</td>
-                        <td>{{ $detail->product->nama_barang }}</td>
-                        <td>{{ $detail->qty }}</td>
-                        <td>{{ $detail->qty_received ?? 0 }}</td>
+                        <th>Kode</th>
+                        <th>Nama Barang</th>
+                        <th>Qty PO</th>
+                        <th>Sudah Diterima</th>
+                        <th>Sisa</th>
+                        <th>Qty Terima Sekarang</th>
                     </tr>
-                @endforeach
-            </tbody>
+                </thead>
 
-        </table>
+                <tbody>
+                    @foreach($purchaseOrder->details as $detail)
+                        @php
+                            $sisa = $detail->qty - ($detail->qty_received ?? 0);
+                        @endphp
+
+                        <tr>
+                            <td>{{ $detail->product->kode_barang }}</td>
+                            <td>{{ $detail->product->nama_barang }}</td>
+                            <td>{{ $detail->qty }}</td>
+                            <td>{{ $detail->qty_received ?? 0 }}</td>
+                            <td>{{ $sisa }}</td>
+                            <td>
+                                @if(
+                                    $purchaseOrder->status == 'approved' &&
+                                    $sisa > 0 &&
+                                    in_array(auth()->user()->role, ['admin', 'manager', 'purchasing'])
+                                )
+                                    <input type="number"
+                                           name="receive_qty[{{ $detail->id }}]"
+                                           class="form-control"
+                                           min="0"
+                                           max="{{ $sisa }}"
+                                           value="0">
+                                @else
+                                    -
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+
+            </table>
+
+        </div>
+
+        @if(
+            $purchaseOrder->status == 'approved' &&
+            in_array(auth()->user()->role, ['admin', 'manager', 'purchasing'])
+        )
+            <button class="btn btn-primary mt-3">
+                Terima Barang 
+            </button>
+
+            </form>
+        @endif
 
     </div>
 

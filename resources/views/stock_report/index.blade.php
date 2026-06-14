@@ -7,20 +7,68 @@
 <div class="container mt-4 mb-5">
 
     <h3 class="mb-3">Laporan Stok</h3>
-    <div class="mb-3">
-    <a href="/stock-report/export"
-       class="btn btn-success">
-        Export CSV
-    </a>
-    <a href="/stock-report/print"
-   class="btn btn-danger">
-    Print / PDF
-</a>
-<a href="/stock-report/pdf"
-   class="btn btn-danger">
-    PDF
-</a>
-</div>
+
+    <div class="mb-3 d-flex gap-2 flex-wrap">
+        <a href="/stock-report/export?brand_id={{ request('brand_id') }}"
+           class="btn btn-success">
+            Export CSV
+        </a>
+
+        <a href="/stock-report/print?brand_id={{ request('brand_id') }}"
+           class="btn btn-danger">
+            Print / PDF
+        </a>
+
+        <a href="/stock-report/pdf?brand_id={{ request('brand_id') }}"
+           class="btn btn-danger">
+            PDF
+        </a>
+    </div>
+
+    <div class="card shadow border-0 mb-3">
+        <div class="card-body">
+
+            <form method="GET" action="/stock-report">
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label">
+                            Filter Brand
+                        </label>
+
+                        <select name="brand_id"
+                                class="form-select">
+
+                            <option value="">
+                                Semua Brand
+                            </option>
+
+                            @foreach($brands as $brand)
+                                <option value="{{ $brand->id }}"
+                                    {{ request('brand_id') == $brand->id ? 'selected' : '' }}>
+                                    {{ $brand->nama_merek }}
+                                </option>
+                            @endforeach
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-4 d-flex align-items-end gap-2">
+                        <button class="btn btn-primary">
+                            Filter
+                        </button>
+
+                        <a href="/stock-report"
+                           class="btn btn-secondary">
+                            Reset
+                        </a>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+    </div>
 
     <div class="card shadow border-0">
 
@@ -32,7 +80,8 @@
                     <tr>
                         <th>Kode</th>
                         <th>Nama Barang</th>
-                        <th>category</th>
+                        <th>Kategori</th>
+                        <th>Brand</th>
                         <th>Stok Awal</th>
                         <th>Masuk</th>
                         <th>Keluar</th>
@@ -50,7 +99,9 @@
 
                             <td>{{ $product->nama_barang }}</td>
 
-                            <td>{{ $product->category ?? '-' }}</td>
+                            <td>{{ $product->category->nama_category ?? '-' }}</td>
+
+                            <td>{{ $product->brand->nama_merek ?? '-' }}</td>
 
                             <td>{{ $product->stok_awal }}</td>
 
@@ -88,7 +139,7 @@
                     @empty
 
                         <tr>
-                            <td colspan="9" class="text-center">
+                            <td colspan="10" class="text-center">
                                 Belum ada data barang.
                             </td>
                         </tr>
@@ -103,4 +154,5 @@
     </div>
 
 </div>
+
 @endsection

@@ -13,7 +13,7 @@
 <div class="card shadow border-0 mb-4">
     <div class="card-body">
 
-        <form method="GET">
+        <form method="GET" action="/stock-card">
 
             <div class="mb-3">
                 <label class="form-label">
@@ -54,116 +54,185 @@
 
 @if($product)
 
-    <div class="card shadow border-0">
+    <div class="card shadow border-0 mb-4">
 
         <div class="card-header bg-primary text-white">
             <strong>
-                {{ $product->nama_barang }}
+                Informasi Barang
             </strong>
         </div>
 
         <div class="card-body">
 
-            <p class="mb-1">
-                <strong>Kode:</strong>
-                {{ $product->kode_barang }}
-            </p>
+            <div class="row">
 
-            <p class="mb-1">
-                <strong>category:</strong>
-                {{ $product->category ?? '-' }}
-            </p>
+                <div class="col-md-6">
 
-            <p class="mb-1">
-                <strong>Satuan:</strong>
+                    <p class="mb-1">
+                        <strong>Kode:</strong>
+                        {{ $product->kode_barang }}
+                    </p>
 
-                @if($product->unit)
-                    {{ $product->unit->nama_satuan }}
+                    <p class="mb-1">
+                        <strong>Nama Barang:</strong>
+                        {{ $product->nama_barang }}
+                    </p>
 
-                    @if($product->unit->kode)
-                        ({{ $product->unit->kode }})
-                    @endif
-                @else
-                    -
-                @endif
-            </p>
+                    <p class="mb-1">
+                        <strong>Kategori:</strong>
+                        {{ $product->category->nama_category ?? '-' }}
+                    </p>
 
-            <p class="mb-3">
-                <strong>Saldo Akhir:</strong>
-                <span class="badge bg-success">
-                    {{ $saldo }}
-                </span>
-            </p>
+                    <p class="mb-1">
+                        <strong>Brand:</strong>
+                        {{ $product->brand->nama_merek ?? '-' }}
+                    </p>
 
-            <div class="table-responsive">
+                </div>
 
-                <table class="table table-bordered align-middle">
+                <div class="col-md-6">
 
-                    <thead class="table-primary">
-                        <tr>
-                            <th>Tanggal</th>
-                            <th>Jenis</th>
-                            <th>Masuk</th>
-                            <th>Keluar</th>
-                            <th>Saldo</th>
-                        </tr>
-                    </thead>
+                    <p class="mb-1">
+                        <strong>Gudang:</strong>
+                        {{ $product->warehouse->nama_gudang ?? '-' }}
+                    </p>
 
-                    <tbody>
+                    <p class="mb-1">
+                        <strong>Unit:</strong>
 
-                        @forelse($mutations as $row)
+                        @if($product->unit)
+                            {{ $product->unit->nama_satuan }}
 
-                            <tr>
-                                <td>
-                                    {{ date('d-m-Y H:i', strtotime($row['tanggal'])) }}
-                                </td>
+                            @if($product->unit->kode)
+                                ({{ $product->unit->kode }})
+                            @endif
+                        @else
+                            -
+                        @endif
+                    </p>
 
-                                <td>
-                                    @if($row['jenis'] == 'STOK MASUK')
-                                        <span class="badge bg-success">
-                                            STOK MASUK
-                                        </span>
-                                    @elseif($row['jenis'] == 'STOK KELUAR')
-                                        <span class="badge bg-danger">
-                                            STOK KELUAR
-                                        </span>
-                                    @else
-                                        <span class="badge bg-secondary">
-                                            STOK AWAL
-                                        </span>
-                                    @endif
-                                </td>
+                    <p class="mb-1">
+                        <strong>Stok Minimum:</strong>
+                        {{ $product->stok_minimum }}
+                    </p>
 
-                                <td>
-                                    {{ $row['masuk'] }}
-                                </td>
+                    <p class="mb-1">
+                        <strong>Saldo Akhir:</strong>
+                        <span class="badge bg-success">
+                            {{ $saldo }}
+                        </span>
+                    </p>
 
-                                <td>
-                                    {{ $row['keluar'] }}
-                                </td>
-
-                                <td>
-                                    <strong>
-                                        {{ $row['saldo'] }}
-                                    </strong>
-                                </td>
-                            </tr>
-
-                        @empty
-
-                            <tr>
-                                <td colspan="5" class="text-center">
-                                    Belum ada mutasi stok.
-                                </td>
-                            </tr>
-
-                        @endforelse
-
-                    </tbody>
-
-                </table>
+                </div>
 
             </div>
+
+        </div>
+
+    </div>
+
+    <div class="card shadow border-0">
+
+        <div class="card-header bg-dark text-white">
+            Riwayat Mutasi Stok
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered align-middle mb-0">
+
+                <thead class="table-primary">
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Jenis</th>
+                        <th>Dokumen</th>
+                        <th>Keterangan</th>
+                        <th>Qty Mutasi</th>
+                        <th>Masuk</th>
+                        <th>Keluar</th>
+                        <th>Saldo</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @forelse($mutations as $row)
+
+                        <tr>
+
+                            <td>
+                                {{ date('d-m-Y H:i', strtotime($row['tanggal'])) }}
+                            </td>
+
+                            <td>
+                                @if($row['jenis'] == 'STOK MASUK')
+                                    <span class="badge bg-success">
+                                        STOK MASUK
+                                    </span>
+                                @elseif($row['jenis'] == 'STOK KELUAR')
+                                    <span class="badge bg-danger">
+                                        STOK KELUAR
+                                    </span>
+                                @else
+                                    <span class="badge bg-secondary">
+                                        STOK AWAL
+                                    </span>
+                                @endif
+                            </td>
+
+                            <td>
+                                {{ $row['dokumen'] ?? '-' }}
+                            </td>
+
+                            <td>
+                                {{ $row['keterangan'] ?? '-' }}
+                            </td>
+
+                            <td>
+                                @if($row['jenis'] == 'STOK MASUK')
+                                    <span class="badge bg-success">
+                                        {{ $row['masuk'] }}
+                                    </span>
+                                @elseif($row['jenis'] == 'STOK KELUAR')
+                                    <span class="badge bg-danger">
+                                        {{ $row['keluar'] }}
+                                    </span>
+                                @else
+                                    <span class="badge bg-secondary">
+                                        {{ $row['masuk'] }}
+                                    </span>
+                                @endif
+                            </td>
+
+                            <td>
+                                {{ $row['masuk'] }}
+                            </td>
+
+                            <td>
+                                {{ $row['keluar'] }}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    {{ $row['saldo'] }}
+                                </strong>
+                            </td>
+
+                        </tr>
+
+                    @empty
+
+                        <tr>
+                            <td colspan="8" class="text-center">
+                                Belum ada mutasi stok.
+                            </td>
+                        </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
 
         </div>
 

@@ -10,24 +10,23 @@ return new class extends Migration
     {
         Schema::create('stock_ins', function (Blueprint $table) {
 
-            $table->id();
+    $table->id();
 
-            $table->date('tanggal');
+    $table->foreignId('warehouse_id')
+        ->nullable()
+        ->constrained('warehouses')
+        ->nullOnDelete();
 
-            $table->foreignId('warehouse_id')
-                ->nullable()
-                ->constrained('warehouses')
-                ->nullOnDelete();
+    $table->date('tanggal');
 
-            $table->string('supplier')->nullable();
+    $table->string('supplier')->nullable();
 
-            $table->string('nomor_dokumen')->nullable();
+    $table->string('nomor_dokumen')->nullable();
 
-            $table->text('keterangan')->nullable();
+    $table->text('keterangan')->nullable();
 
-            $table->timestamps();
-
-        });
+    $table->timestamps();
+});
     }
 
     public function down(): void

@@ -48,7 +48,7 @@
                     <tr>
                         <th width="35%">category</th>
                         <td>
-                            {{ $product->category ?? '-' }}
+                            {{ $product->category->name ?? '-' }}
                         </td>
                     </tr>
 

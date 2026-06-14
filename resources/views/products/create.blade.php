@@ -70,29 +70,29 @@
                        required>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">
-                    category
-                </label>
+<div class="mb-3">
+    <label class="form-label">
+        Kategori
+    </label>
 
-                <select name="category"
-                        class="form-control">
+    <select name="category_id"
+            class="form-control">
 
-                    <option value="">
-                        Pilih category
-                    </option>
+        <option value="">
+            Pilih Kategori
+        </option>
 
-                    @foreach($categories as $category)
-                        <option value="{{ $category->nama_category }}"
-                            {{ old('category') == $category->nama_category ? 'selected' : '' }}>
+        @foreach($categories as $category)
+            <option value="{{ $category->id }}"
+                {{ old('category_id') == $category->id ? 'selected' : '' }}>
 
-                            {{ $category->nama_category }}
+                {{ $category->nama_category }}
 
-                        </option>
-                    @endforeach
+            </option>
+        @endforeach
 
-                </select>
-            </div>
+    </select>
+</div>
 
             <div class="mb-3">
                 <label class="form-label">

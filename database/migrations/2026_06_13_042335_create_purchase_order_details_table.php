@@ -22,14 +22,9 @@ return new class extends Migration
 
             $table->integer('qty')->default(0);
 
-            $table->decimal('harga', 15, 2)
-                ->default(0);
-
-            $table->decimal('subtotal', 15, 2)
-                ->default(0);
+            $table->text('keterangan')->nullable();
 
             $table->timestamps();
-
         });
     }
 

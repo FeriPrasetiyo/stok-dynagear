@@ -58,8 +58,8 @@
                         </tr>
 
                         <tr>
-                            <th>category</th>
-                            <td>{{ $product->category ?? '-' }}</td>
+                            <th>Category</th>
+                            <td>{{ $product->category->nama_category ?? '-' }}</td>
                         </tr>
 
                         <tr>

@@ -134,45 +134,69 @@ class PurchaseOrderController extends Controller
             ->with('success', 'PO berhasil dihapus');
     }
 
-    public function receive(PurchaseOrder $purchaseOrder)
+public function receive(PurchaseOrder $purchaseOrder)
 {
-    $purchaseOrder->load('supplier', 'details');
+    $purchaseOrder->load('supplier', 'details.product');
+
     if ($purchaseOrder->status !== 'approved') {
         return back()->with('error', 'PO hanya bisa diterima jika status approved');
     }
 
-    DB::transaction(function () use ($purchaseOrder) {
+    $receiveQty = request('receive_qty', []);
+
+    DB::transaction(function () use ($purchaseOrder, $receiveQty) {
 
         $stockIn = \App\Models\StockIn::create([
             'warehouse_id' => null,
             'tanggal' => date('Y-m-d'),
             'supplier' => $purchaseOrder->supplier->nama_supplier ?? '-',
             'nomor_dokumen' => $purchaseOrder->nomor_po,
-            'keterangan' => 'Auto dari Purchase Order',
+            'keterangan' => 'Receive dari Purchase Order',
         ]);
 
         foreach ($purchaseOrder->details as $detail) {
+
+            $qtyTerima = (int) ($receiveQty[$detail->id] ?? 0);
+
+            $sisa = $detail->qty - ($detail->qty_received ?? 0);
+
+            if ($qtyTerima <= 0) {
+                continue;
+            }
+
+            if ($qtyTerima > $sisa) {
+                $qtyTerima = $sisa;
+            }
+
             $stockIn->details()->create([
                 'product_id' => $detail->product_id,
-                'qty' => $detail->qty,
+                'qty' => $qtyTerima,
             ]);
 
             $detail->update([
-                'qty_received' => $detail->qty,
+                'qty_received' => ($detail->qty_received ?? 0) + $qtyTerima,
             ]);
         }
 
-        $purchaseOrder->update([
-            'status' => 'received',
-        ]);
+        $purchaseOrder->refresh();
+
+        $allReceived = $purchaseOrder->details()
+            ->whereColumn('qty_received', '<', 'qty')
+            ->count() == 0;
+
+        if ($allReceived) {
+            $purchaseOrder->update([
+                'status' => 'received',
+            ]);
+        }
 
         activity_log(
             'RECEIVE',
             'PURCHASE ORDER',
-            'PO '.$purchaseOrder->nomor_po.' diterima dan masuk ke stok'
+            'Receive barang dari PO '.$purchaseOrder->nomor_po
         );
     });
 
-    return back()->with('success', 'PO berhasil diterima dan stok masuk otomatis dibuat');
+    return back()->with('success', 'Barang PO berhasil diterima');
 }
 }

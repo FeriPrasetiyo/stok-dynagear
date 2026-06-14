@@ -91,7 +91,7 @@
 
                         <p class="mb-1">
     <strong>category:</strong>
-    {{ $product->category ?? '-' }}
+    {{ $product->category->nama_category ?? '-' }}
 </p>
 
 <p class="mb-1">

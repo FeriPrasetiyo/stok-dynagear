@@ -11,8 +11,7 @@ class StockCardController extends Controller
 {
     public function index(Request $request)
     {
-        $products = Product::with('unit')
-            ->orderBy('nama_barang')
+        $products = Product::orderBy('nama_barang')
             ->get();
 
         $product = null;
@@ -21,17 +20,21 @@ class StockCardController extends Controller
 
         if ($request->product_id) {
 
-            $product = Product::with('unit')
-                ->findOrFail($request->product_id);
-
-            $saldo = $product->stok_awal;
+            $product = Product::with([
+                'unit',
+                'brand',
+                'warehouse',
+                'category',
+            ])->findOrFail($request->product_id);
 
             $mutations[] = [
                 'tanggal' => $product->created_at,
                 'jenis' => 'STOK AWAL',
+                'dokumen' => '-',
+                'keterangan' => 'Stok Awal Barang',
                 'masuk' => $product->stok_awal,
                 'keluar' => 0,
-                'saldo' => $saldo,
+                'saldo' => 0,
             ];
 
             $stockIns = StockInDetail::with('stockIn')
@@ -39,15 +42,14 @@ class StockCardController extends Controller
                 ->get();
 
             foreach ($stockIns as $item) {
-
-                $saldo += $item->qty;
-
                 $mutations[] = [
-                    'tanggal' => $item->stockIn->tanggal ?? $item->created_at,
+                    'tanggal' => $item->created_at,
                     'jenis' => 'STOK MASUK',
+                    'dokumen' => $item->stockIn->nomor_dokumen ?? '-',
+                    'keterangan' => $item->stockIn->keterangan ?? '-',
                     'masuk' => $item->qty,
                     'keluar' => 0,
-                    'saldo' => $saldo,
+                    'saldo' => 0,
                 ];
             }
 
@@ -56,15 +58,14 @@ class StockCardController extends Controller
                 ->get();
 
             foreach ($stockOuts as $item) {
-
-                $saldo -= $item->qty;
-
                 $mutations[] = [
-                    'tanggal' => $item->stockOut->tanggal ?? $item->created_at,
+                    'tanggal' => $item->created_at,
                     'jenis' => 'STOK KELUAR',
+                    'dokumen' => $item->stockOut->nomor_so ?? '-',
+                    'keterangan' => $item->stockOut->keterangan ?? '-',
                     'masuk' => 0,
                     'keluar' => $item->qty,
-                    'saldo' => $saldo,
+                    'saldo' => 0,
                 ];
             }
 
@@ -75,11 +76,7 @@ class StockCardController extends Controller
             $saldo = 0;
 
             foreach ($mutations as $index => $row) {
-                if ($row['jenis'] == 'STOK AWAL') {
-                    $saldo = $row['masuk'];
-                } else {
-                    $saldo = $saldo + $row['masuk'] - $row['keluar'];
-                }
+                $saldo = $saldo + $row['masuk'] - $row['keluar'];
 
                 $mutations[$index]['saldo'] = $saldo;
             }
