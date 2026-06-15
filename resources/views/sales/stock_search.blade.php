@@ -19,30 +19,56 @@
 
             <form method="GET" action="/sales/stock-search">
 
-                <div class="row g-2">
+    <div class="row g-2">
 
-                    <div class="col-md-8">
-                        <input type="text"
-                               name="search"
-                               value="{{ $search }}"
-                               class="form-control form-control-lg"
-                               placeholder="Cari kode barang, nama barang, merek, atau kategori...">
-                    </div>
+        <div class="col-md-5">
+            <input type="text"
+                   name="search"
+                   value="{{ $search }}"
+                   class="form-control form-control-lg"
+                   placeholder="Cari kode barang, nama barang, merek, atau kategori...">
+        </div>
 
-                    <div class="col-md-4 d-flex gap-2">
-                        <button class="btn btn-primary btn-lg">
-                            Cari
-                        </button>
+        <div class="col-md-3">
+            <select name="status"
+                    class="form-select form-select-lg">
+                <option value="">Semua Stok</option>
+                <option value="tersedia" {{ request('status') == 'tersedia' ? 'selected' : '' }}>
+                    Tersedia
+                </option>
+                <option value="kosong" {{ request('status') == 'kosong' ? 'selected' : '' }}>
+                    Kosong
+                </option>
+            </select>
+        </div>
 
-                        <a href="/sales/stock-search"
-                           class="btn btn-secondary btn-lg">
-                            Reset
-                        </a>
-                    </div>
+        <div class="col-md-2">
+            <select name="sort"
+                    class="form-select form-select-lg">
+                <option value="">Urutan</option>
+                <option value="stok_terbanyak" {{ request('sort') == 'stok_terbanyak' ? 'selected' : '' }}>
+                    Stok Terbanyak
+                </option>
+                <option value="stok_terkecil" {{ request('sort') == 'stok_terkecil' ? 'selected' : '' }}>
+                    Stok Terkecil
+                </option>
+            </select>
+        </div>
 
-                </div>
+        <div class="col-md-2 d-flex gap-2">
+            <button class="btn btn-primary btn-lg">
+                Cari
+            </button>
 
-            </form>
+            <a href="/sales/stock-search"
+               class="btn btn-secondary btn-lg">
+                Reset
+            </a>
+        </div>
+
+    </div>
+
+</form>
 
         </div>
     </div>
@@ -149,7 +175,7 @@
         </div>
 
         <div class="card-footer">
-            {{ $products->links() }}
+            {{ $products->withQueryString()->links() }}
         </div>
 
     </div>

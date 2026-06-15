@@ -7,7 +7,7 @@
 
 <div class="container mt-4 mb-5">
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
+<div class="d-flex justify-content-between align-items-center mb-3">
 
     <div>
         <h3 class="fw-bold mb-1">
@@ -19,10 +19,24 @@
         </p>
     </div>
 
-    <a href="/products/create"
-       class="btn btn-success">
-        + Tambah Barang
-    </a>
+    <div class="d-flex gap-2">
+
+        <a href="{{ route('products.template') }}"
+           class="btn btn-info">
+            Download Template
+        </a>
+
+        <a href="{{ route('products.import.index') }}"
+           class="btn btn-primary">
+            Import Excel
+        </a>
+
+        <a href="/products/create"
+           class="btn btn-success">
+            + Tambah Barang
+        </a>
+
+    </div>
 
 </div>
 

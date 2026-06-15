@@ -20,6 +20,8 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\ImportProductController;
+use App\Http\Controllers\ProductImportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -109,6 +111,18 @@ Route::middleware(['auth', 'role:admin,manager,gudang'])->group(function () {
         return view('products.scan_qr');
     });
 
+    Route::get('/products/template', [ProductImportController::class, 'template'])
+    ->name('products.template');
+
+Route::get('/products/import', [ProductImportController::class, 'index'])
+    ->name('products.import.index');
+
+Route::post('/products/import/preview', [ProductImportController::class, 'preview'])
+    ->name('products.import.preview');
+
+Route::post('/products/import/store', [ProductImportController::class, 'store'])
+    ->name('products.import.store');
+
     Route::resource('/products', ProductController::class);
 
     Route::resource('/categories', CategoryController::class);
@@ -132,7 +146,7 @@ Route::middleware(['auth', 'role:admin,manager,gudang'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:admin,manager,gudang,sales'])->group(function () {
+Route::middleware(['auth', 'role:admin,manager,gudang,sales,purchasing'])->group(function () {
 
     Route::get('/stock-card', [StockCardController::class, 'index']);
 
