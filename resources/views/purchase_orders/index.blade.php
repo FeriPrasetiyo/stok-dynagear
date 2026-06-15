@@ -151,46 +151,51 @@
 
                         <td>
 
-                            <a href="/purchase-orders/{{ $po->id }}"
-                               class="btn btn-info btn-sm">
-                                Detail
-                            </a>
+    <a href="/purchase-orders/{{ $po->id }}"
+       class="btn btn-info btn-sm">
+        Detail
+    </a>
 
-                            @if($po->status == 'draft')
+    {{-- Hanya Admin & Manager yang bisa Approve --}}
+    @if(
+        in_array(auth()->user()->role, ['admin', 'manager'])
+        && $po->status == 'draft'
+    )
 
-                                <form action="/purchase-orders/{{ $po->id }}/approve"
-                                      method="POST"
-                                      class="d-inline">
+        <form action="/purchase-orders/{{ $po->id }}/approve"
+              method="POST"
+              class="d-inline">
 
-                                    @csrf
+            @csrf
 
-                                    <button class="btn btn-success btn-sm">
-                                        Approve
-                                    </button>
+            <button class="btn btn-success btn-sm">
+                Approve
+            </button>
 
-                                </form>
+        </form>
 
-                            @endif
+    @endif
 
-                            @if($po->status != 'received')
+    {{-- Semua role masih bisa hapus jika belum received --}}
+    @if($po->status != 'received')
 
-                                <form action="/purchase-orders/{{ $po->id }}"
-                                      method="POST"
-                                      class="d-inline"
-                                      onsubmit="return confirm('Hapus PO ini?')">
+        <form action="/purchase-orders/{{ $po->id }}"
+              method="POST"
+              class="d-inline"
+              onsubmit="return confirm('Hapus PO ini?')">
 
-                                    @csrf
-                                    @method('DELETE')
+            @csrf
+            @method('DELETE')
 
-                                    <button class="btn btn-danger btn-sm">
-                                        Hapus
-                                    </button>
+            <button class="btn btn-danger btn-sm">
+                Hapus
+            </button>
 
-                                </form>
+        </form>
 
-                            @endif
+    @endif
 
-                        </td>
+</td>
 
                     </tr>
 
