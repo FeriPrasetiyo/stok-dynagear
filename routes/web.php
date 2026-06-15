@@ -49,6 +49,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
 });
 
+
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard - Admin + Manager + Sales
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth','role:admin,manager,sales')->group(function () {
+    Route::get('/sales/stock-search', [\App\Http\Controllers\SalesStockController::class, 'index']);
+});
+
 /*
 |--------------------------------------------------------------------------
 | Admin + Manager

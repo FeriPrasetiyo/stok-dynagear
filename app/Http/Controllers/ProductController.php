@@ -21,7 +21,7 @@ class ProductController extends Controller
                 $query->where('kode_barang', 'like', "%{$search}%")
                     ->orWhere('nama_barang', 'like', "%{$search}%")
                     ->orWhereHas('category', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%");
+                        $q->where('nama_category', 'like', "%{$search}%");
                     });
             })
             ->latest()

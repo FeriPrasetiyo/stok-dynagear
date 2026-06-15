@@ -173,7 +173,7 @@
                 @endif
 
                 {{-- Report --}}
-                @if(in_array(Auth::user()->role, ['admin','manager','gudang','sales']))
+                @if(in_array(Auth::user()->role, ['admin','manager','gudang','purchasing']))
 
                 <li class="nav-item dropdown">
 
@@ -215,6 +215,19 @@
 
                     </ul>
 
+                </li>
+
+                @endif
+
+
+                {{-- Sales Stock --}}
+                @if(in_array(Auth::user()->role, ['admin','manager','sales']))
+
+                <li class="nav-item dropdown">
+                    <a href="/sales/stock-search"
+                       class="nav-link">
+                        Cari Stok
+                    </a>
                 </li>
 
                 @endif
