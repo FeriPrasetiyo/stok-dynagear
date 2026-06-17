@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="container mt-4 mb-5">
+<div class="container-fluid mt-4 mb-5">
 
     <div class="card shadow border-0 mb-4">
         <div class="card-body">
@@ -19,75 +19,128 @@
 
             <form method="GET" action="/sales/stock-search">
 
-    <div class="row g-2">
+                <div class="row g-2">
 
-        <div class="col-md-5">
-            <input type="text"
-                   name="search"
-                   value="{{ $search }}"
-                   class="form-control form-control-lg"
-                   placeholder="Cari kode barang, nama barang, merek, atau kategori...">
-        </div>
+                    <div class="col-12 col-md-4">
+                        <label class="form-label d-md-none">
+                            Pencarian
+                        </label>
 
-        <div class="col-md-3">
-            <select name="status"
-                    class="form-select form-select-lg">
-                <option value="">Semua Stok</option>
-                <option value="tersedia" {{ request('status') == 'tersedia' ? 'selected' : '' }}>
-                    Tersedia
-                </option>
-                <option value="kosong" {{ request('status') == 'kosong' ? 'selected' : '' }}>
-                    Kosong
-                </option>
-            </select>
-        </div>
+                        <input type="text"
+                               name="search"
+                               value="{{ $search }}"
+                               class="form-control form-control-lg"
+                               placeholder="Cari kode / nama / kategori...">
+                    </div>
 
-        <div class="col-md-2">
-            <select name="sort"
-                    class="form-select form-select-lg">
-                <option value="">Urutan</option>
-                <option value="stok_terbanyak" {{ request('sort') == 'stok_terbanyak' ? 'selected' : '' }}>
-                    Stok Terbanyak
-                </option>
-                <option value="stok_terkecil" {{ request('sort') == 'stok_terkecil' ? 'selected' : '' }}>
-                    Stok Terkecil
-                </option>
-            </select>
-        </div>
+                    <div class="col-12 col-md-3">
+                        <label class="form-label d-md-none">
+                            Brand
+                        </label>
 
-        <div class="col-md-2 d-flex gap-2">
-            <button class="btn btn-primary btn-lg">
-                Cari
-            </button>
+                        <select name="brand_id"
+                                class="form-select form-select-lg">
+                            <option value="">
+                                Semua Brand
+                            </option>
 
-            <a href="/sales/stock-search"
-               class="btn btn-secondary btn-lg">
-                Reset
-            </a>
-        </div>
+                            @foreach($brands as $brand)
+                                <option value="{{ $brand->id }}"
+                                    {{ request('brand_id') == $brand->id ? 'selected' : '' }}>
+                                    {{ $brand->nama_merek }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label d-md-none">
+                            Status
+                        </label>
 
-</form>
+                        <select name="status"
+                                class="form-select form-select-lg">
+                            <option value="">
+                                Semua Stok
+                            </option>
+
+                            <option value="tersedia"
+                                {{ request('status') == 'tersedia' ? 'selected' : '' }}>
+                                Tersedia
+                            </option>
+
+                            <option value="kosong"
+                                {{ request('status') == 'kosong' ? 'selected' : '' }}>
+                                Kosong
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-6 col-md-2">
+                        <label class="form-label d-md-none">
+                            Urutan
+                        </label>
+
+                        <select name="sort"
+                                class="form-select form-select-lg">
+                            <option value="">
+                                Urutan
+                            </option>
+
+                            <option value="stok_terbanyak"
+                                {{ request('sort') == 'stok_terbanyak' ? 'selected' : '' }}>
+                                Stok Banyak
+                            </option>
+
+                            <option value="stok_terkecil"
+                                {{ request('sort') == 'stok_terkecil' ? 'selected' : '' }}>
+                                Stok Kecil
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-1 d-grid">
+                        <button class="btn btn-primary btn-lg">
+                            Cari
+                        </button>
+                    </div>
+
+                    <div class="col-12 d-grid d-md-none">
+                        <a href="/sales/stock-search"
+                           class="btn btn-secondary btn-lg">
+                            Reset
+                        </a>
+                    </div>
+
+                    <div class="col-12 d-none d-md-block mt-2">
+                        <a href="/sales/stock-search"
+                           class="btn btn-secondary">
+                            Reset Filter
+                        </a>
+                    </div>
+
+                </div>
+
+            </form>
 
         </div>
     </div>
 
     <div class="card shadow border-0">
 
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <div class="card-header bg-primary text-white d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
             <strong>
                 Tabel Stok Barang
             </strong>
 
-            <span class="badge bg-light text-dark">
+            <span class="badge bg-light text-dark align-self-start align-self-md-center">
                 Total Data: {{ $products->total() }}
             </span>
         </div>
 
         <div class="table-responsive">
 
-            <table class="table table-bordered table-hover align-middle mb-0">
+            <table class="table table-bordered table-hover align-middle mb-0 table-sm">
 
                 <thead class="table-primary">
                     <tr>
@@ -111,7 +164,11 @@
                                 <strong>{{ $product->kode_barang }}</strong>
                             </td>
 
-                            <td>
+                            <td style="min-width: 220px;">
+                                <strong class="d-block d-md-none text-primary">
+                                    {{ $product->kode_barang }}
+                                </strong>
+
                                 {{ $product->nama_barang }}
                             </td>
 
@@ -161,7 +218,8 @@
                     @empty
 
                         <tr>
-                            <td colspan="8" class="text-center">
+                            <td colspan="8"
+                                class="text-center">
                                 Barang tidak ditemukan.
                             </td>
                         </tr>

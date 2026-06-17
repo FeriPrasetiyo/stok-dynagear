@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use App\Models\StockInDetail;
-use App\Models\StockOutDetail;
+use App\Models\Brand;
 use Illuminate\Http\Request;
 
 class SalesStockController extends Controller
@@ -14,6 +13,9 @@ class SalesStockController extends Controller
         $search = $request->search;
         $status = $request->status;
         $sort = $request->sort;
+        $brandId = $request->brand_id;
+
+        $brands = Brand::orderBy('nama_merek')->get();
 
         $products = Product::with([
                 'brand',
@@ -34,6 +36,9 @@ class SalesStockController extends Controller
                             $category->where('nama_category', 'like', "%{$search}%");
                         });
                 });
+            })
+            ->when($brandId, function ($query) use ($brandId) {
+                $query->where('brand_id', $brandId);
             })
             ->get();
 
@@ -78,7 +83,9 @@ class SalesStockController extends Controller
             'products',
             'search',
             'status',
-            'sort'
+            'sort',
+            'brandId',
+            'brands'
         ));
     }
 }

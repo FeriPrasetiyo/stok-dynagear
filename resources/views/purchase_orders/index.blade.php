@@ -149,16 +149,19 @@
                             @endif
                         </td>
 
-                        <td>
+<td>
 
+    {{-- Tombol Detail --}}
     <a href="/purchase-orders/{{ $po->id }}"
        class="btn btn-info btn-sm">
         Detail
     </a>
 
-    {{-- Hanya Admin & Manager yang bisa Approve --}}
+    {{-- Tombol Approve hanya untuk Admin & Manager --}}
     @if(
-        in_array(auth()->user()->role, ['admin', 'manager'])
+        auth()->check()
+        && isset(auth()->user()->role)
+        && in_array(strtolower(auth()->user()->role), ['admin', 'manager'])
         && $po->status == 'draft'
     )
 
@@ -168,7 +171,8 @@
 
             @csrf
 
-            <button class="btn btn-success btn-sm">
+            <button type="submit"
+                    class="btn btn-success btn-sm">
                 Approve
             </button>
 
@@ -176,7 +180,7 @@
 
     @endif
 
-    {{-- Semua role masih bisa hapus jika belum received --}}
+    {{-- Tombol Hapus --}}
     @if($po->status != 'received')
 
         <form action="/purchase-orders/{{ $po->id }}"
@@ -187,7 +191,8 @@
             @csrf
             @method('DELETE')
 
-            <button class="btn btn-danger btn-sm">
+            <button type="submit"
+                    class="btn btn-danger btn-sm">
                 Hapus
             </button>
 
