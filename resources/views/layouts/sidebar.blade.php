@@ -104,7 +104,7 @@
             </li>
         @endif
 
-        @if(in_array(Auth::user()->role, ['admin','manager','gudang','sales','purchasing']))
+        @if(in_array(Auth::user()->role, ['admin','manager','gudang','purchasing']))
             <li class="nav-item mt-3 mb-1 text-muted small fw-bold">
                 REPORT
             </li>
