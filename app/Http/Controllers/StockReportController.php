@@ -10,6 +10,20 @@ use Illuminate\Http\Request;
 
 class StockReportController extends Controller
 {
+    private function addStockCalculation($products)
+    {
+        foreach ($products as $product) {
+            $stockIn = StockInDetail::where('product_id', $product->id)->sum('qty');
+            $stockOut = StockOutDetail::where('product_id', $product->id)->sum('qty');
+
+            $product->stock_in = $stockIn;
+            $product->stock_out = $stockOut;
+            $product->stock_actual = $product->stok_awal + $stockIn - $stockOut;
+        }
+
+        return $products;
+    }
+
     private function getProductsWithStock(Request $request)
     {
         $products = Product::with([
@@ -24,14 +38,25 @@ class StockReportController extends Controller
             ->orderBy('nama_barang')
             ->get();
 
-        foreach ($products as $product) {
-            $stockIn = StockInDetail::where('product_id', $product->id)->sum('qty');
-            $stockOut = StockOutDetail::where('product_id', $product->id)->sum('qty');
+        return $this->addStockCalculation($products);
+    }
 
-            $product->stock_in = $stockIn;
-            $product->stock_out = $stockOut;
-            $product->stock_actual = $product->stok_awal + $stockIn - $stockOut;
-        }
+    private function getProductsWithStockPaginate(Request $request)
+    {
+        $products = Product::with([
+                'warehouse',
+                'brand',
+                'unit',
+                'category',
+            ])
+            ->when($request->brand_id, function ($query) use ($request) {
+                $query->where('brand_id', $request->brand_id);
+            })
+            ->orderBy('nama_barang')
+            ->paginate(20)
+            ->withQueryString();
+
+        $this->addStockCalculation($products);
 
         return $products;
     }
@@ -40,7 +65,7 @@ class StockReportController extends Controller
     {
         $brands = Brand::orderBy('nama_merek')->get();
 
-        $products = $this->getProductsWithStock($request);
+        $products = $this->getProductsWithStockPaginate($request);
 
         return view('stock_report.index', compact(
             'products',
@@ -52,11 +77,11 @@ class StockReportController extends Controller
     {
         $products = $this->getProductsWithStock($request);
 
-        $filename = 'laporan_stok_'.date('Y-m-d_H-i-s').'.csv';
+        $filename = 'laporan_stok_' . date('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ];
 
         $callback = function () use ($products) {
