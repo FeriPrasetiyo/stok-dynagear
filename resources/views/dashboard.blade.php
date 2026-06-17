@@ -4,6 +4,15 @@
 
 @section('content')
 
+@php
+    $canSeeStockMinimum = in_array(auth()->user()->role, [
+        'admin',
+        'manager',
+        'gudang',
+        'purchasing'
+    ]);
+@endphp
+
 <div class="mb-4">
 
     <h3 class="fw-bold">
@@ -51,27 +60,31 @@
         </div>
     </div>
 
-    <div class="col-12 col-md-6 col-lg-3 mb-3">
-        <div class="card shadow border-0">
-            <div class="card-body">
-                <p class="text-muted mb-1">Stok Minimum</p>
+    @if($canSeeStockMinimum)
 
-                <h3 class="fw-bold">
-                    {{ $stokMinimumCount }}
-                </h3>
+        <div class="col-12 col-md-6 col-lg-3 mb-3">
+            <div class="card shadow border-0">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Stok Minimum</p>
 
-                @if($stokMinimumCount > 0)
-                    <span class="badge bg-danger">
-                        Segera Restock
-                    </span>
-                @else
-                    <span class="badge bg-success">
-                        Aman
-                    </span>
-                @endif
+                    <h3 class="fw-bold">
+                        {{ $stokMinimumCount }}
+                    </h3>
+
+                    @if($stokMinimumCount > 0)
+                        <span class="badge bg-danger">
+                            Segera Restock
+                        </span>
+                    @else
+                        <span class="badge bg-success">
+                            Aman
+                        </span>
+                    @endif
+                </div>
             </div>
         </div>
-    </div>
+
+    @endif
 
     <div class="col-12 col-md-6 col-lg-3 mb-3">
         <div class="card shadow border-0">
@@ -93,12 +106,14 @@
 
 </div>
 
-@if($stokMinimumCount > 0)
+@if($canSeeStockMinimum && $stokMinimumCount > 0)
+
     <div class="alert alert-warning mt-3">
         <strong>Perhatian!</strong>
         Ada <strong>{{ $stokMinimumCount }}</strong>
         barang yang mendekati stok minimum.
     </div>
+
 @endif
 
 <div class="card shadow border-0 mt-4">
@@ -163,96 +178,100 @@
 
 </div>
 
-<div class="card shadow border-0 mt-4">
+@if($canSeeStockMinimum)
 
-    <div class="card-header bg-danger text-white">
-        Top 10 Barang Stok Minimum
-    </div>
+    <div class="card shadow border-0 mt-4">
 
-    <div class="card-body">
+        <div class="card-header bg-danger text-white">
+            Top 10 Barang Stok Minimum
+        </div>
 
-        @if(count($stokMinimumProducts) > 0)
+        <div class="card-body">
 
-            <div class="table-responsive">
+            @if(count($stokMinimumProducts) > 0)
 
-                <table class="table table-bordered align-middle mb-0">
+                <div class="table-responsive">
 
-                    <thead class="table-danger">
-                        <tr>
-                            <th>Kode</th>
-                            <th>Nama Barang</th>
-                            <th>Kategori</th>
-                            <th>Gudang</th>
-                            <th>Satuan</th>
-                            <th>Stok Aktual</th>
-                            <th>Stok Minimum</th>
-                            <th>Lokasi Rak</th>
-                            <th width="100">Aksi</th>
-                        </tr>
-                    </thead>
+                    <table class="table table-bordered align-middle mb-0">
 
-                    <tbody>
-
-                        @foreach($stokMinimumProducts as $product)
-
+                        <thead class="table-danger">
                             <tr>
-                                <td>{{ $product->kode_barang }}</td>
-
-                                <td>{{ $product->nama_barang }}</td>
-
-                                <td>{{ $product->kategori ?? '-' }}</td>
-
-                                <td>{{ $product->warehouse->nama_gudang ?? '-' }}</td>
-
-                                <td>
-                                    {{ $product->unit->nama_satuan ?? '-' }}
-
-                                    @if($product->unit && $product->unit->kode)
-                                        ({{ $product->unit->kode }})
-                                    @endif
-                                </td>
-
-                                <td>
-                                    <span class="badge bg-danger">
-                                        {{ $product->stok_aktual }}
-                                    </span>
-                                </td>
-
-                                <td>
-                                    {{ $product->stok_minimum }}
-                                </td>
-
-                                <td>
-                                    {{ $product->lokasi_rak ?? '-' }}
-                                </td>
-
-                                <td>
-                                    <a href="/products/{{ $product->id }}"
-                                       class="btn btn-primary btn-sm">
-                                        Detail
-                                    </a>
-                                </td>
+                                <th>Kode</th>
+                                <th>Nama Barang</th>
+                                <th>Kategori</th>
+                                <th>Gudang</th>
+                                <th>Satuan</th>
+                                <th>Stok Aktual</th>
+                                <th>Stok Minimum</th>
+                                <th>Lokasi Rak</th>
+                                <th width="100">Aksi</th>
                             </tr>
+                        </thead>
 
-                        @endforeach
+                        <tbody>
 
-                    </tbody>
+                            @foreach($stokMinimumProducts as $product)
 
-                </table>
+                                <tr>
+                                    <td>{{ $product->kode_barang }}</td>
 
-            </div>
+                                    <td>{{ $product->nama_barang }}</td>
 
-        @else
+                                    <td>{{ $product->kategori ?? '-' }}</td>
 
-            <div class="alert alert-success mb-0">
-                Semua stok masih aman.
-            </div>
+                                    <td>{{ $product->warehouse->nama_gudang ?? '-' }}</td>
 
-        @endif
+                                    <td>
+                                        {{ $product->unit->nama_satuan ?? '-' }}
+
+                                        @if($product->unit && $product->unit->kode)
+                                            ({{ $product->unit->kode }})
+                                        @endif
+                                    </td>
+
+                                    <td>
+                                        <span class="badge bg-danger">
+                                            {{ $product->stok_aktual }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        {{ $product->stok_minimum }}
+                                    </td>
+
+                                    <td>
+                                        {{ $product->lokasi_rak ?? '-' }}
+                                    </td>
+
+                                    <td>
+                                        <a href="/products/{{ $product->id }}"
+                                           class="btn btn-primary btn-sm">
+                                            Detail
+                                        </a>
+                                    </td>
+                                </tr>
+
+                            @endforeach
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            @else
+
+                <div class="alert alert-success mb-0">
+                    Semua stok masih aman.
+                </div>
+
+            @endif
+
+        </div>
 
     </div>
 
-</div>
+@endif
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -265,7 +284,9 @@
             labels: [
                 'Total Barang',
                 'Total Stok',
-                'Stok Minimum',
+                @if($canSeeStockMinimum)
+                    'Stok Minimum',
+                @endif
                 'Transaksi Hari Ini'
             ],
             datasets: [{
@@ -273,7 +294,9 @@
                 data: [
                     {{ $totalBarang }},
                     {{ $totalStok }},
-                    {{ $stokMinimumCount }},
+                    @if($canSeeStockMinimum)
+                        {{ $stokMinimumCount }},
+                    @endif
                     {{ $stokMasukHariIni + $stokKeluarHariIni }}
                 ],
                 borderWidth: 1
