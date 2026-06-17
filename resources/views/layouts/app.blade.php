@@ -24,12 +24,18 @@
         }
 
         .sidebar {
-            position: sticky;
-            top: 66px;
-            height: calc(100vh - 66px);
-            overflow-y: auto;
             background: #ffffff;
+            min-height: 100vh;
+            overflow-y: auto;
             border-right: 1px solid #dee2e6;
+        }
+
+        @media (min-width: 992px) {
+            .sidebar {
+                position: sticky;
+                top: 66px;
+                height: calc(100vh - 66px);
+            }
         }
 
         .sidebar .nav-link {
@@ -70,15 +76,45 @@
 <body>
 
 @auth
+
     @include('layouts.navbar')
+
+    {{-- Sidebar Mobile --}}
+    <div class="offcanvas offcanvas-start"
+         tabindex="-1"
+         id="mobileSidebar"
+         aria-labelledby="mobileSidebarLabel">
+
+        <div class="offcanvas-header bg-primary text-white">
+
+            <h5 class="offcanvas-title"
+                id="mobileSidebarLabel">
+                Dynagear Stock
+            </h5>
+
+            <button type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="offcanvas"
+                    aria-label="Close">
+            </button>
+
+        </div>
+
+        <div class="offcanvas-body p-0">
+            @include('layouts.sidebar')
+        </div>
+
+    </div>
 
     <div class="container-fluid">
         <div class="row">
 
+            {{-- Sidebar Desktop --}}
             <aside class="col-lg-2 p-0 d-none d-lg-block">
                 @include('layouts.sidebar')
             </aside>
 
+            {{-- Content --}}
             <main class="col-lg-10 px-4 py-4">
 
                 @include('partials.alerts')
@@ -91,8 +127,11 @@
 
         </div>
     </div>
+
 @else
+
     @yield('content')
+
 @endauth
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
