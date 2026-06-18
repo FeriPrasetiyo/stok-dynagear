@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Brand;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class SalesStockController extends Controller
 {
@@ -49,13 +50,9 @@ class SalesStockController extends Controller
                 - ($product->total_stock_out ?? 0);
         }
 
-        if ($status == 'tersedia') {
-            $products = $products->where('stock_actual', '>', 0);
-        }
-
-        if ($status == 'kosong') {
-            $products = $products->where('stock_actual', '<=', 0);
-        }
+        $products = $products->filter(function ($product) {
+            return $product->stock_actual > 0;
+        });
 
         if ($sort == 'stok_terbanyak') {
             $products = $products->sortByDesc('stock_actual');
@@ -68,8 +65,8 @@ class SalesStockController extends Controller
         $page = request()->get('page', 1);
         $perPage = 20;
 
-        $products = new \Illuminate\Pagination\LengthAwarePaginator(
-            $products->forPage($page, $perPage),
+        $products = new LengthAwarePaginator(
+            $products->forPage($page, $perPage)->values(),
             $products->count(),
             $perPage,
             $page,

@@ -9,26 +9,32 @@
     <div class="card shadow border-0 mb-4">
         <div class="card-body">
 
-            <h3 class="fw-bold mb-2">Pencarian Stok Sales</h3>
+            <h3 class="fw-bold mb-2">
+                Pencarian Stok Sales
+            </h3>
 
             <p class="text-muted mb-3">
-                Cek ketersediaan stok barang.
+                Cek ketersediaan stok barang. Barang kosong tidak ditampilkan.
             </p>
 
             <form method="GET" action="/sales/stock-search">
                 <div class="row g-2">
 
-                    <div class="col-12 col-md-4">
+                    <div class="col-12 col-md-5">
                         <input type="text"
                                name="search"
                                value="{{ $search }}"
                                class="form-control form-control-lg"
-                               placeholder="Cari kode / nama / kategori...">
+                               placeholder="Cari kode / nama / kategori / brand...">
                     </div>
 
                     <div class="col-12 col-md-3">
-                        <select name="brand_id" class="form-select form-select-lg">
-                            <option value="">Semua Brand</option>
+                        <select name="brand_id"
+                                class="form-select form-select-lg">
+
+                            <option value="">
+                                Semua Brand
+                            </option>
 
                             @foreach($brands as $brand)
                                 <option value="{{ $brand->id }}"
@@ -36,30 +42,28 @@
                                     {{ $brand->nama_merek }}
                                 </option>
                             @endforeach
+
                         </select>
                     </div>
 
                     <div class="col-6 col-md-2">
-                        <select name="status" class="form-select form-select-lg">
-                            <option value="">Semua Stok</option>
-                            <option value="tersedia" {{ request('status') == 'tersedia' ? 'selected' : '' }}>
-                                Tersedia
-                            </option>
-                            <option value="kosong" {{ request('status') == 'kosong' ? 'selected' : '' }}>
-                                Kosong
-                            </option>
-                        </select>
-                    </div>
+                        <select name="sort"
+                                class="form-select form-select-lg">
 
-                    <div class="col-6 col-md-2">
-                        <select name="sort" class="form-select form-select-lg">
-                            <option value="">Urutan</option>
-                            <option value="stok_terbanyak" {{ request('sort') == 'stok_terbanyak' ? 'selected' : '' }}>
+                            <option value="">
+                                Urutan
+                            </option>
+
+                            <option value="stok_terbanyak"
+                                {{ request('sort') == 'stok_terbanyak' ? 'selected' : '' }}>
                                 Stok Banyak
                             </option>
-                            <option value="stok_terkecil" {{ request('sort') == 'stok_terkecil' ? 'selected' : '' }}>
+
+                            <option value="stok_terkecil"
+                                {{ request('sort') == 'stok_terkecil' ? 'selected' : '' }}>
                                 Stok Kecil
                             </option>
+
                         </select>
                     </div>
 
@@ -69,15 +73,10 @@
                         </button>
                     </div>
 
-                    <div class="col-6 d-grid d-md-none">
-                        <a href="/sales/stock-search" class="btn btn-secondary btn-lg">
+                    <div class="col-12 col-md-1 d-grid">
+                        <a href="/sales/stock-search"
+                           class="btn btn-secondary btn-lg">
                             Reset
-                        </a>
-                    </div>
-
-                    <div class="col-12 d-none d-md-block mt-2">
-                        <a href="/sales/stock-search" class="btn btn-secondary">
-                            Reset Filter
                         </a>
                     </div>
 
@@ -88,7 +87,9 @@
     </div>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="fw-bold mb-0">Data Stok</h5>
+        <h5 class="fw-bold mb-0">
+            Data Stok Ready
+        </h5>
 
         <span class="badge bg-primary">
             Total: {{ $products->total() }}
@@ -104,6 +105,7 @@
                 <div class="card-body">
 
                     <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+
                         <div>
                             <div class="fw-bold text-primary">
                                 {{ $product->kode_barang }}
@@ -115,17 +117,15 @@
                         </div>
 
                         <div>
-                            @if($product->stock_actual <= 0)
-                                <span class="badge bg-danger">Kosong</span>
-                            @elseif($product->stock_actual <= $product->stok_minimum)
-                                <span class="badge bg-warning text-dark">Terbatas</span>
-                            @else
-                                <span class="badge bg-success">Tersedia</span>
-                            @endif
+                            <span class="badge bg-success">
+                                Ready Stock
+                            </span>
                         </div>
+
                     </div>
 
                     <div class="row small text-muted">
+
                         <div class="col-6 mb-2">
                             Brand
                             <div class="text-dark fw-semibold">
@@ -151,6 +151,10 @@
                             Unit
                             <div class="text-dark">
                                 {{ $product->unit->nama_satuan ?? '-' }}
+
+                                @if($product->unit && $product->unit->kode)
+                                    ({{ $product->unit->kode }})
+                                @endif
                             </div>
                         </div>
 
@@ -160,6 +164,7 @@
                                 {{ $product->warehouse->nama_gudang ?? '-' }}
                             </div>
                         </div>
+
                     </div>
 
                 </div>
@@ -168,7 +173,7 @@
         @empty
 
             <div class="alert alert-info text-center">
-                Barang tidak ditemukan.
+                Barang ready stock tidak ditemukan.
             </div>
 
         @endforelse
@@ -204,6 +209,7 @@
                                     {{ $product->kode_barang }}
                                 </strong>
                                 <br>
+
                                 <span class="text-truncate d-inline-block"
                                       style="max-width: 260px;"
                                       title="{{ $product->nama_barang }}">
@@ -211,15 +217,25 @@
                                 </span>
                             </td>
 
-                            <td>{{ $product->brand->nama_merek ?? '-' }}</td>
+                            <td>
+                                {{ $product->brand->nama_merek ?? '-' }}
+                            </td>
 
-                            <td>{{ $product->category->nama_category ?? '-' }}</td>
+                            <td>
+                                {{ $product->category->nama_category ?? '-' }}
+                            </td>
 
                             <td>
                                 {{ $product->unit->nama_satuan ?? '-' }}
+
+                                @if($product->unit && $product->unit->kode)
+                                    ({{ $product->unit->kode }})
+                                @endif
                             </td>
 
-                            <td>{{ $product->warehouse->nama_gudang ?? '-' }}</td>
+                            <td>
+                                {{ $product->warehouse->nama_gudang ?? '-' }}
+                            </td>
 
                             <td class="text-center">
                                 <span class="badge bg-dark fs-6">
@@ -228,13 +244,9 @@
                             </td>
 
                             <td class="text-center">
-                                @if($product->stock_actual <= 0)
-                                    <span class="badge bg-danger">Kosong</span>
-                                @elseif($product->stock_actual <= $product->stok_minimum)
-                                    <span class="badge bg-warning text-dark">Terbatas</span>
-                                @else
-                                    <span class="badge bg-success">Tersedia</span>
-                                @endif
+                                <span class="badge bg-success">
+                                    Ready Stock
+                                </span>
                             </td>
                         </tr>
 
@@ -242,7 +254,7 @@
 
                         <tr>
                             <td colspan="7" class="text-center">
-                                Barang tidak ditemukan.
+                                Barang ready stock tidak ditemukan.
                             </td>
                         </tr>
 
