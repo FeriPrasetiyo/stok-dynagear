@@ -1,3 +1,43 @@
+@php
+    $role = Auth::user()->role ?? '';
+
+    $isAdmin = in_array($role, [
+        'super_admin',
+        'admin_pl',
+    ]);
+
+    $isManager = in_array($role, [
+        'super_admin',
+        'manager_pl',
+        'manager_sales',
+    ]);
+
+    $isSales = in_array($role, [
+        'super_admin',
+        'sales',
+        'admin_sales',
+        'manager_sales',
+    ]);
+
+    $isGudang = in_array($role, [
+        'super_admin',
+        'gudang',
+    ]);
+
+    $isPurchasing = in_array($role, [
+        'super_admin',
+        'purchasing',
+    ]);
+
+    $canInventory = $isAdmin || $isManager || $isGudang;
+    $canTransaction = $isAdmin || $isManager || $isGudang;
+    $canPurchasing = $isAdmin || $isManager || $isPurchasing;
+    $canStockCard = $isAdmin || $isManager || $isGudang || $isSales || $isPurchasing;
+    $canStockReport = $isAdmin || $isManager;
+    $canSalesSearch = $isSales;
+    $canAdminMenu = $isAdmin;
+@endphp
+
 <div class="sidebar bg-white border-end shadow-sm min-vh-100 p-3">
 
     <ul class="nav flex-column">
@@ -9,7 +49,7 @@
             </a>
         </li>
 
-        @if(in_array(Auth::user()->role, ['admin','manager','gudang']))
+        @if($canInventory)
             <li class="nav-item mt-3 mb-1 text-muted small fw-bold">
                 MASTER DATA
             </li>
@@ -50,7 +90,7 @@
             </li>
         @endif
 
-        @if(in_array(Auth::user()->role, ['admin','manager','gudang']))
+        @if($canTransaction)
             <li class="nav-item mt-3 mb-1 text-muted small fw-bold">
                 TRANSAKSI
             </li>
@@ -84,7 +124,7 @@
             </li>
         @endif
 
-        @if(in_array(Auth::user()->role, ['admin','manager','purchasing']))
+        @if($canPurchasing)
             <li class="nav-item mt-3 mb-1 text-muted small fw-bold">
                 PURCHASING
             </li>
@@ -104,19 +144,21 @@
             </li>
         @endif
 
-        @if(in_array(Auth::user()->role, ['admin','manager','gudang','purchasing']))
+        @if($canStockCard || $canStockReport)
             <li class="nav-item mt-3 mb-1 text-muted small fw-bold">
                 REPORT
             </li>
 
-            <li class="nav-item">
-                <a href="/stock-card" class="nav-link text-dark">
-                    <i class="bi bi-journal-text me-2"></i>
-                    Kartu Stok
-                </a>
-            </li>
+            @if($canStockCard)
+                <li class="nav-item">
+                    <a href="/stock-card" class="nav-link text-dark">
+                        <i class="bi bi-journal-text me-2"></i>
+                        Kartu Stok
+                    </a>
+                </li>
+            @endif
 
-            @if(in_array(Auth::user()->role, ['admin','manager']))
+            @if($canStockReport)
                 <li class="nav-item">
                     <a href="/stock-report" class="nav-link text-dark">
                         <i class="bi bi-bar-chart me-2"></i>
@@ -133,7 +175,7 @@
             @endif
         @endif
 
-        @if(in_array(Auth::user()->role, ['admin','manager','sales']))
+        @if($canSalesSearch)
             <li class="nav-item mt-3">
                 <a href="/sales/stock-search" class="nav-link text-dark">
                     <i class="bi bi-search me-2"></i>
@@ -142,7 +184,7 @@
             </li>
         @endif
 
-        @if(in_array(Auth::user()->role, ['admin','manager','gudang']))
+        @if($canInventory)
             <li class="nav-item">
                 <a href="/scan-qr" class="nav-link text-dark">
                     <i class="bi bi-qr-code-scan me-2"></i>
@@ -151,16 +193,9 @@
             </li>
         @endif
 
-        @if(Auth::user()->role == 'admin')
+        @if($canAdminMenu)
             <li class="nav-item mt-3 mb-1 text-muted small fw-bold">
                 ADMIN
-            </li>
-
-            <li class="nav-item">
-                <a href="/users" class="nav-link text-dark">
-                    <i class="bi bi-people me-2"></i>
-                    User
-                </a>
             </li>
 
             <li class="nav-item">

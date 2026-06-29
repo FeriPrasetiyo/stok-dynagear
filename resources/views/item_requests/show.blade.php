@@ -71,7 +71,7 @@
 
         @if(
             $itemRequest->status == 'pending' &&
-            in_array(auth()->user()->role, ['admin', 'manager'])
+            in_array(auth()->user()->role, ['super_admin', 'manager_pl', 'admin_pl'])
         )
             <form action="/item-requests/{{ $itemRequest->id }}/approve"
                   method="POST"

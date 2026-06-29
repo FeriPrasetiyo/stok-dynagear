@@ -4,6 +4,30 @@
 
 @section('content')
 
+@php
+    $role = auth()->user()->role ?? '';
+
+    $canApprovePurchaseOrder = in_array($role, [
+        'super_admin',
+        'manager_pl',
+        'admin_pl',
+    ]);
+
+    $canCreatePurchaseOrder = in_array($role, [
+        'super_admin',
+        'manager_pl',
+        'admin_pl',
+        'purchasing',
+    ]);
+
+    $canDeletePurchaseOrder = in_array($role, [
+        'super_admin',
+        'manager_pl',
+        'admin_pl',
+        'purchasing',
+    ]);
+@endphp
+
 <div class="d-flex justify-content-between align-items-center mb-4">
 
     <div>
@@ -16,10 +40,12 @@
         </p>
     </div>
 
-    <a href="/purchase-orders/create"
-       class="btn btn-success">
-        + Buat PO
-    </a>
+    @if($canCreatePurchaseOrder)
+        <a href="/purchase-orders/create"
+           class="btn btn-success">
+            + Buat PO
+        </a>
+    @endif
 
 </div>
 
@@ -149,58 +175,42 @@
                             @endif
                         </td>
 
-<td>
+                        <td>
 
-    {{-- Tombol Detail --}}
-    <a href="/purchase-orders/{{ $po->id }}"
-       class="btn btn-info btn-sm">
-        Detail
-    </a>
+                            <a href="/purchase-orders/{{ $po->id }}"
+                               class="btn btn-info btn-sm">
+                                Detail
+                            </a>
 
-    {{-- Tombol Approve hanya untuk Admin & Manager --}}
-    @if(
-        auth()->check()
-        && isset(auth()->user()->role)
-        && in_array(strtolower(auth()->user()->role), ['admin', 'manager'])
-        && $po->status == 'draft'
-    )
+                            @if($canApprovePurchaseOrder && $po->status == 'draft')
+                                <form action="/purchase-orders/{{ $po->id }}/approve"
+                                      method="POST"
+                                      class="d-inline">
+                                    @csrf
 
-        <form action="/purchase-orders/{{ $po->id }}/approve"
-              method="POST"
-              class="d-inline">
+                                    <button type="submit"
+                                            class="btn btn-success btn-sm">
+                                        Approve
+                                    </button>
+                                </form>
+                            @endif
 
-            @csrf
+                            @if($canDeletePurchaseOrder && $po->status != 'received')
+                                <form action="/purchase-orders/{{ $po->id }}"
+                                      method="POST"
+                                      class="d-inline"
+                                      onsubmit="return confirm('Hapus PO ini?')">
+                                    @csrf
+                                    @method('DELETE')
 
-            <button type="submit"
-                    class="btn btn-success btn-sm">
-                Approve
-            </button>
+                                    <button type="submit"
+                                            class="btn btn-danger btn-sm">
+                                        Hapus
+                                    </button>
+                                </form>
+                            @endif
 
-        </form>
-
-    @endif
-
-    {{-- Tombol Hapus --}}
-    @if($po->status != 'received')
-
-        <form action="/purchase-orders/{{ $po->id }}"
-              method="POST"
-              class="d-inline"
-              onsubmit="return confirm('Hapus PO ini?')">
-
-            @csrf
-            @method('DELETE')
-
-            <button type="submit"
-                    class="btn btn-danger btn-sm">
-                Hapus
-            </button>
-
-        </form>
-
-    @endif
-
-</td>
+                        </td>
 
                     </tr>
 

@@ -13,17 +13,21 @@ use Illuminate\Notifications\Notifiable;
     'name',
     'email',
     'password',
-    'role'
+    'role',
 ])]
 
 #[Hidden([
     'password',
-    'remember_token'
+    'remember_token',
 ])]
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
+
+    protected $connection = 'portal';
+
+    protected $table = 'users';
 
     protected function casts(): array
     {
@@ -32,5 +36,4 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    
 }

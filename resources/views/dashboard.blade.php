@@ -5,11 +5,13 @@
 @section('content')
 
 @php
-    $canSeeStockMinimum = in_array(auth()->user()->role, [
-        'admin',
-        'manager',
+    $role = auth()->user()->role ?? '';
+
+    $canSeeStockMinimum = in_array($role, [
+        'super_admin',
+        'manager_pl',
+        'admin_pl',
         'gudang',
-        'purchasing'
     ]);
 @endphp
 

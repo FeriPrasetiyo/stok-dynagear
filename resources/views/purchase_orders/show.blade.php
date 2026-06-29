@@ -4,6 +4,29 @@
 
 @section('content')
 
+@php
+    $role = auth()->user()->role ?? '';
+
+    $canApprovePurchaseOrder = in_array($role, [
+        'super_admin',
+        'manager_pl',
+        'admin_pl',
+    ]);
+
+    $canCancelPurchaseOrder = in_array($role, [
+        'super_admin',
+        'manager_pl',
+        'admin_pl',
+    ]);
+
+    $canReceivePurchaseOrder = in_array($role, [
+        'super_admin',
+        'manager_pl',
+        'admin_pl',
+        'purchasing',
+    ]);
+@endphp
+
 <div class="card shadow border-0 mb-4">
 
     <div class="card-header bg-primary text-white">
@@ -38,41 +61,35 @@
 
         <div class="mt-3">
 
-    @if(
-        $purchaseOrder->status == 'draft' &&
-        in_array(auth()->user()->role, ['admin', 'manager'])
-    )
-        <form action="/purchase-orders/{{ $purchaseOrder->id }}/approve"
-              method="POST"
-              class="d-inline">
-            @csrf
+            @if($purchaseOrder->status == 'draft' && $canApprovePurchaseOrder)
+                <form action="/purchase-orders/{{ $purchaseOrder->id }}/approve"
+                      method="POST"
+                      class="d-inline">
+                    @csrf
 
-            <button class="btn btn-success">
-                Approve PO
-            </button>
-        </form>
-    @endif
+                    <button class="btn btn-success">
+                        Approve PO
+                    </button>
+                </form>
+            @endif
 
-    @if(
-        $purchaseOrder->status != 'received' &&
-        in_array(auth()->user()->role, ['admin', 'manager'])
-    )
-        <form action="/purchase-orders/{{ $purchaseOrder->id }}/cancel"
-              method="POST"
-              class="d-inline">
-            @csrf
+            @if($purchaseOrder->status != 'received' && $canCancelPurchaseOrder)
+                <form action="/purchase-orders/{{ $purchaseOrder->id }}/cancel"
+                      method="POST"
+                      class="d-inline">
+                    @csrf
 
-            <button class="btn btn-danger">
-                Cancel PO
-            </button>
-        </form>
-    @endif
+                    <button class="btn btn-danger">
+                        Cancel PO
+                    </button>
+                </form>
+            @endif
 
-    <a href="/purchase-orders" class="btn btn-secondary">
-        Kembali
-    </a>
+            <a href="/purchase-orders" class="btn btn-secondary">
+                Kembali
+            </a>
 
-</div>
+        </div>
 
     </div>
 
@@ -86,10 +103,7 @@
 
     <div class="card-body">
 
-        @if(
-            $purchaseOrder->status == 'approved' &&
-            in_array(auth()->user()->role, ['admin', 'manager', 'purchasing'])
-        )
+        @if($purchaseOrder->status == 'approved' && $canReceivePurchaseOrder)
             <form action="/purchase-orders/{{ $purchaseOrder->id }}/receive"
                   method="POST">
                 @csrf
@@ -124,9 +138,9 @@
                             <td>{{ $sisa }}</td>
                             <td>
                                 @if(
-                                    $purchaseOrder->status == 'approved' &&
-                                    $sisa > 0 &&
-                                    in_array(auth()->user()->role, ['admin', 'manager', 'purchasing'])
+                                    $purchaseOrder->status == 'approved'
+                                    && $sisa > 0
+                                    && $canReceivePurchaseOrder
                                 )
                                     <input type="number"
                                            name="receive_qty[{{ $detail->id }}]"
@@ -146,12 +160,9 @@
 
         </div>
 
-        @if(
-            $purchaseOrder->status == 'approved' &&
-            in_array(auth()->user()->role, ['admin', 'manager', 'purchasing'])
-        )
+        @if($purchaseOrder->status == 'approved' && $canReceivePurchaseOrder)
             <button class="btn btn-primary mt-3">
-                Terima Barang 
+                Terima Barang
             </button>
 
             </form>

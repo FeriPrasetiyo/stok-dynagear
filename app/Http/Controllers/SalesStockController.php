@@ -12,11 +12,9 @@ class SalesStockController extends Controller
     public function index(Request $request)
     {
         $search = $request->search;
-        $status = $request->status;
-        $sort = $request->sort;
         $brandId = $request->brand_id;
 
-        $brands = Brand::orderBy('nama_merek')->get();
+        $brands = Brand::orderBy('nama_merek', 'asc')->get();
 
         $products = Product::with([
                 'brand',
@@ -45,22 +43,17 @@ class SalesStockController extends Controller
 
         foreach ($products as $product) {
             $product->stock_actual =
-                $product->stok_awal
+                ($product->stok_awal ?? 0)
                 + ($product->total_stock_in ?? 0)
                 - ($product->total_stock_out ?? 0);
         }
 
-        $products = $products->filter(function ($product) {
-            return $product->stock_actual > 0;
-        });
-
-        if ($sort == 'stok_terbanyak') {
-            $products = $products->sortByDesc('stock_actual');
-        } elseif ($sort == 'stok_terkecil') {
-            $products = $products->sortBy('stock_actual');
-        } else {
-            $products = $products->sortBy('nama_barang');
-        }
+        $products = $products
+            ->filter(function ($product) {
+                return $product->stock_actual > 0;
+            })
+            ->sortBy('kode_barang', SORT_NATURAL | SORT_FLAG_CASE)
+            ->values();
 
         $page = request()->get('page', 1);
         $perPage = 20;
@@ -79,8 +72,6 @@ class SalesStockController extends Controller
         return view('sales.stock_search', compact(
             'products',
             'search',
-            'status',
-            'sort',
             'brandId',
             'brands'
         ));

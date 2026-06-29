@@ -48,19 +48,10 @@
                 </span>
             </div>
 
-            <form action="/logout"
-                  method="POST"
-                  class="mb-0">
-
-                @csrf
-
-                <button type="submit"
-                        class="btn btn-warning btn-sm px-3">
-                    <i class="bi bi-box-arrow-right me-1"></i>
-                    <span class="d-none d-sm-inline">Logout</span>
-                </button>
-
-            </form>
+            <a href="http://portal.dynagear.test:8000/dashboard"
+                class="btn btn-warning">
+                Kembali Portal
+            </a>
 
         </div>
 

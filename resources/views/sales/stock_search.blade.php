@@ -20,7 +20,7 @@
             <form method="GET" action="/sales/stock-search">
                 <div class="row g-2">
 
-                    <div class="col-12 col-md-5">
+                    <div class="col-12 col-md-6">
                         <input type="text"
                                name="search"
                                value="{{ $search }}"
@@ -46,34 +46,13 @@
                         </select>
                     </div>
 
-                    <div class="col-6 col-md-2">
-                        <select name="sort"
-                                class="form-select form-select-lg">
-
-                            <option value="">
-                                Urutan
-                            </option>
-
-                            <option value="stok_terbanyak"
-                                {{ request('sort') == 'stok_terbanyak' ? 'selected' : '' }}>
-                                Stok Banyak
-                            </option>
-
-                            <option value="stok_terkecil"
-                                {{ request('sort') == 'stok_terkecil' ? 'selected' : '' }}>
-                                Stok Kecil
-                            </option>
-
-                        </select>
-                    </div>
-
                     <div class="col-6 col-md-1 d-grid">
                         <button class="btn btn-primary btn-lg">
                             Cari
                         </button>
                     </div>
 
-                    <div class="col-12 col-md-1 d-grid">
+                    <div class="col-6 col-md-2 d-grid">
                         <a href="/sales/stock-search"
                            class="btn btn-secondary btn-lg">
                             Reset

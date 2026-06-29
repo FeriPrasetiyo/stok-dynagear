@@ -18,6 +18,10 @@
 
         @if($errors->any())
             <div class="alert alert-danger">
+                <strong>Terjadi Kesalahan:</strong>
+
+                <hr>
+
                 @foreach($errors->all() as $error)
                     <div>{{ $error }}</div>
                 @endforeach
@@ -55,7 +59,8 @@
 
                     <select name="supplier_id"
                             id="supplier_id"
-                            class="form-control supplier-select">
+                            class="form-control supplier-select"
+                            required>
 
                         <option value="">
                             Pilih Supplier
@@ -75,7 +80,9 @@
 
             <hr>
 
-            <h5>Detail Barang</h5>
+            <h5 class="fw-bold mb-3">
+                Detail Barang
+            </h5>
 
             <div id="items">
 

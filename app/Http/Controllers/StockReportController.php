@@ -18,7 +18,7 @@ class StockReportController extends Controller
 
             $product->stock_in = $stockIn;
             $product->stock_out = $stockOut;
-            $product->stock_actual = $product->stok_awal + $stockIn - $stockOut;
+            $product->stock_actual = ($product->stok_awal ?? 0) + $stockIn - $stockOut;
         }
 
         return $products;
@@ -35,7 +35,7 @@ class StockReportController extends Controller
             ->when($request->brand_id, function ($query) use ($request) {
                 $query->where('brand_id', $request->brand_id);
             })
-            ->orderBy('nama_barang')
+            ->orderBy('kode_barang', 'asc')
             ->get();
 
         return $this->addStockCalculation($products);
@@ -52,7 +52,7 @@ class StockReportController extends Controller
             ->when($request->brand_id, function ($query) use ($request) {
                 $query->where('brand_id', $request->brand_id);
             })
-            ->orderBy('nama_barang')
+            ->orderBy('kode_barang', 'asc')
             ->paginate(20)
             ->withQueryString();
 
@@ -63,7 +63,7 @@ class StockReportController extends Controller
 
     public function index(Request $request)
     {
-        $brands = Brand::orderBy('nama_merek')->get();
+        $brands = Brand::orderBy('nama_merek', 'asc')->get();
 
         $products = $this->getProductsWithStockPaginate($request);
 

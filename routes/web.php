@@ -30,7 +30,7 @@ use App\Http\Controllers\UnitController;
 */
 
 Route::get('/', function () {
-    return redirect('/login');
+    return redirect('/dashboard');
 });
 
 Route::get('/login', [AuthController::class, 'showLogin'])
@@ -49,18 +49,27 @@ Route::post('/logout', [AuthController::class, 'logout'])
 */
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
+
+    Route::get('/cek-login', function () {
+        return auth()->user();
+    });
 });
 
 /*
 |--------------------------------------------------------------------------
 | Sales Stock Search
-| Admin + Manager + Sales
+| Sales + Admin Sales + Manager Sales + PL
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:admin,manager,sales'])->group(function () {
-    Route::get('/sales/stock-search', [SalesStockController::class, 'index']);
+Route::middleware([
+    'auth',
+    'role:super_admin,manager_pl,admin_pl,manager_sales,admin_sales,sales',
+])->group(function () {
+    Route::get('/sales/stock-search', [SalesStockController::class, 'index'])
+        ->name('sales.stock-search');
 });
 
 /*
@@ -69,15 +78,26 @@ Route::middleware(['auth', 'role:admin,manager,sales'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:admin,manager'])->group(function () {
+Route::middleware([
+    'auth',
+    'role:super_admin,manager_pl,admin_pl,manager_sales',
+])->group(function () {
     Route::resource('/users', UserController::class);
 
-    Route::get('/stock-report', [StockReportController::class, 'index']);
-    Route::get('/stock-report/pdf', [StockReportController::class, 'pdf']);
-    Route::get('/stock-report/export', [StockReportController::class, 'export']);
-    Route::get('/stock-report/print', [StockReportController::class, 'print']);
+    Route::get('/stock-report', [StockReportController::class, 'index'])
+        ->name('stock-report.index');
 
-    Route::get('/activity-logs', [ActivityLogController::class, 'index']);
+    Route::get('/stock-report/pdf', [StockReportController::class, 'pdf'])
+        ->name('stock-report.pdf');
+
+    Route::get('/stock-report/export', [StockReportController::class, 'export'])
+        ->name('stock-report.export');
+
+    Route::get('/stock-report/print', [StockReportController::class, 'print'])
+        ->name('stock-report.print');
+
+    Route::get('/activity-logs', [ActivityLogController::class, 'index'])
+        ->name('activity-logs.index');
 });
 
 /*
@@ -86,9 +106,15 @@ Route::middleware(['auth', 'role:admin,manager'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/backup', [BackupController::class, 'index']);
-    Route::post('/backup/download', [BackupController::class, 'download']);
+Route::middleware([
+    'auth',
+    'role:super_admin,admin_pl',
+])->group(function () {
+    Route::get('/backup', [BackupController::class, 'index'])
+        ->name('backup.index');
+
+    Route::post('/backup/download', [BackupController::class, 'download'])
+        ->name('backup.download');
 });
 
 /*
@@ -98,12 +124,16 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:admin,manager,gudang'])->group(function () {
-    Route::get('/products/{product}/qr', [ProductController::class, 'qr']);
+Route::middleware([
+    'auth',
+    'role:super_admin,manager_pl,admin_pl,gudang',
+])->group(function () {
+    Route::get('/products/{product}/qr', [ProductController::class, 'qr'])
+        ->name('products.qr');
 
     Route::get('/scan-qr', function () {
         return view('products.scan_qr');
-    });
+    })->name('scan-qr');
 
     Route::get('/products/template', [ProductImportController::class, 'template'])
         ->name('products.template');
@@ -131,12 +161,16 @@ Route::middleware(['auth', 'role:admin,manager,gudang'])->group(function () {
 /*
 |--------------------------------------------------------------------------
 | Kartu Stok
-| Admin + Manager + Gudang + Sales + Purchasing
+| Semua role yang punya akses Stock
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:admin,manager,gudang,sales,purchasing'])->group(function () {
-    Route::get('/stock-card', [StockCardController::class, 'index']);
+Route::middleware([
+    'auth',
+    'role:super_admin,manager_pl,admin_pl,manager_sales,admin_sales,gudang,sales,purchasing',
+])->group(function () {
+    Route::get('/stock-card', [StockCardController::class, 'index'])
+        ->name('stock-card.index');
 });
 
 /*
@@ -146,11 +180,17 @@ Route::middleware(['auth', 'role:admin,manager,gudang,sales,purchasing'])->group
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:admin,manager,gudang'])->group(function () {
+Route::middleware([
+    'auth',
+    'role:super_admin,manager_pl,admin_pl,gudang',
+])->group(function () {
     Route::resource('/item-requests', ItemRequestController::class);
 
-    Route::post('/item-requests/{itemRequest}/approve', [ItemRequestController::class, 'approve']);
-    Route::post('/item-requests/{itemRequest}/reject', [ItemRequestController::class, 'reject']);
+    Route::post('/item-requests/{itemRequest}/approve', [ItemRequestController::class, 'approve'])
+        ->name('item-requests.approve');
+
+    Route::post('/item-requests/{itemRequest}/reject', [ItemRequestController::class, 'reject'])
+        ->name('item-requests.reject');
 });
 
 /*
@@ -160,11 +200,15 @@ Route::middleware(['auth', 'role:admin,manager,gudang'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:admin,manager,purchasing'])->group(function () {
+Route::middleware([
+    'auth',
+    'role:super_admin,manager_pl,admin_pl,purchasing',
+])->group(function () {
     Route::resource('/suppliers', SupplierController::class);
     Route::resource('/purchase-orders', PurchaseOrderController::class);
 
-    Route::post('/purchase-orders/{purchaseOrder}/receive', [PurchaseOrderController::class, 'receive']);
+    Route::post('/purchase-orders/{purchaseOrder}/receive', [PurchaseOrderController::class, 'receive'])
+        ->name('purchase-orders.receive');
 });
 
 /*
@@ -174,7 +218,13 @@ Route::middleware(['auth', 'role:admin,manager,purchasing'])->group(function () 
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:admin,manager'])->group(function () {
-    Route::post('/purchase-orders/{purchaseOrder}/approve', [PurchaseOrderController::class, 'approve']);
-    Route::post('/purchase-orders/{purchaseOrder}/cancel', [PurchaseOrderController::class, 'cancel']);
+Route::middleware([
+    'auth',
+    'role:super_admin,manager_pl,admin_pl',
+])->group(function () {
+    Route::post('/purchase-orders/{purchaseOrder}/approve', [PurchaseOrderController::class, 'approve'])
+        ->name('purchase-orders.approve');
+
+    Route::post('/purchase-orders/{purchaseOrder}/cancel', [PurchaseOrderController::class, 'cancel'])
+        ->name('purchase-orders.cancel');
 });
