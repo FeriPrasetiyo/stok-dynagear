@@ -70,6 +70,23 @@
                 padding: 1rem !important;
             }
         }
+
+        .btn-portal-back {
+    font-weight: 600;
+    white-space: nowrap;
+    }
+
+@media (max-width: 576px) {
+    .navbar-brand {
+        max-width: 170px;
+    }
+
+    .btn-portal-back {
+        padding: 8px 10px;
+        font-size: 14px;
+        border-radius: 10px;
+    }
+}
     </style>
 </head>
 
