@@ -48,8 +48,8 @@
                 </span>
             </div>
 
-            <a href="http://portal.dynagear.test:8000/dashboard"
-                class="btn btn-warning">
+            <a href="https://portal.dynagear.co.id/dashboard"
+               class="btn btn-warning">
                 Kembali Portal
             </a>
 
