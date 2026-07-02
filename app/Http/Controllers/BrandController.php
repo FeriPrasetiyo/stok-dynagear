@@ -8,11 +8,12 @@ use Illuminate\Http\Request;
 class BrandController extends Controller
 {
     public function index()
-    {
-        $brands = Brand::latest()->paginate(10);
+{
+    $brands = Brand::orderBy('nama_merek', 'asc')
+        ->paginate(10);
 
-        return view('brands.index', compact('brands'));
-    }
+    return view('brands.index', compact('brands'));
+}
 
     public function create()
     {

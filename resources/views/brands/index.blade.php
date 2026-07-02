@@ -47,7 +47,7 @@
                         <tr>
 
                             <td>
-                                {{ $loop->iteration }}
+                                {{ $brands->firstItem() + $loop->index }}
                             </td>
 
                             <td>
