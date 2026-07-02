@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
 use App\Models\Brand;
+use App\Models\Product;
+use App\Models\PurchaseOrderDetail;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -46,11 +47,27 @@ class SalesStockController extends Controller
                 ($product->stok_awal ?? 0)
                 + ($product->total_stock_in ?? 0)
                 - ($product->total_stock_out ?? 0);
+
+            $product->outstanding_po_qty = PurchaseOrderDetail::where('product_id', $product->id)
+                ->whereHas('purchaseOrder', function ($query) {
+                    $query->whereIn('status', [
+                        'approved',
+                        'ordered',
+                    ]);
+                })
+                ->get()
+                ->sum(function ($detail) {
+                    return max(
+                        0,
+                        ($detail->qty ?? 0) - ($detail->qty_received ?? 0)
+                    );
+                });
         }
 
         $products = $products
             ->filter(function ($product) {
-                return $product->stock_actual > 0;
+                return $product->stock_actual > 0
+                    || $product->outstanding_po_qty > 0;
             })
             ->sortBy('kode_barang', SORT_NATURAL | SORT_FLAG_CASE)
             ->values();

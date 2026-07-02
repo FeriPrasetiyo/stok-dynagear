@@ -14,7 +14,7 @@
             </h3>
 
             <p class="text-muted mb-3">
-                Cek ketersediaan stok barang. Barang kosong tidak ditampilkan.
+                Cek stok barang dan jumlah Outstanding PO yang sedang dipesan Purchasing.
             </p>
 
             <form method="GET" action="/sales/stock-search">
@@ -67,7 +67,7 @@
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="fw-bold mb-0">
-            Data Stok Ready
+            Data Stok Sales
         </h5>
 
         <span class="badge bg-primary">
@@ -83,22 +83,14 @@
             <div class="card shadow-sm border-0 mb-3">
                 <div class="card-body">
 
-                    <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                    <div class="mb-3">
 
-                        <div>
-                            <div class="fw-bold text-primary">
-                                {{ $product->kode_barang }}
-                            </div>
-
-                            <div class="fw-semibold">
-                                {{ $product->nama_barang }}
-                            </div>
+                        <div class="fw-bold text-primary">
+                            {{ $product->kode_barang }}
                         </div>
 
-                        <div>
-                            <span class="badge bg-success">
-                                Ready Stock
-                            </span>
+                        <div class="fw-semibold">
+                            {{ $product->nama_barang }}
                         </div>
 
                     </div>
@@ -109,13 +101,6 @@
                             Brand
                             <div class="text-dark fw-semibold">
                                 {{ $product->brand->nama_merek ?? '-' }}
-                            </div>
-                        </div>
-
-                        <div class="col-6 mb-2">
-                            Stok
-                            <div class="text-dark fw-bold fs-5">
-                                {{ $product->stock_actual }}
                             </div>
                         </div>
 
@@ -137,10 +122,28 @@
                             </div>
                         </div>
 
-                        <div class="col-12">
+                        <div class="col-6 mb-2">
                             Gudang
                             <div class="text-dark">
                                 {{ $product->warehouse->nama_gudang ?? '-' }}
+                            </div>
+                        </div>
+
+                        <div class="col-6 mb-2">
+                            Stok
+                            <div>
+                                <span class="badge bg-dark fs-6">
+                                    {{ $product->stock_actual }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-6 mb-2">
+                            Outstanding PO
+                            <div>
+                                <span class="badge bg-warning text-dark fs-6">
+                                    {{ $product->outstanding_po_qty ?? 0 }}
+                                </span>
                             </div>
                         </div>
 
@@ -152,7 +155,7 @@
         @empty
 
             <div class="alert alert-info text-center">
-                Barang ready stock tidak ditemukan.
+                Barang tidak ditemukan.
             </div>
 
         @endforelse
@@ -174,7 +177,7 @@
                         <th>Unit</th>
                         <th>Gudang</th>
                         <th class="text-center">Stok</th>
-                        <th class="text-center">Status</th>
+                        <th class="text-center">Outstanding PO</th>
                     </tr>
                 </thead>
 
@@ -223,8 +226,8 @@
                             </td>
 
                             <td class="text-center">
-                                <span class="badge bg-success">
-                                    Ready Stock
+                                <span class="badge bg-warning text-dark fs-6">
+                                    {{ $product->outstanding_po_qty ?? 0 }}
                                 </span>
                             </td>
                         </tr>
@@ -233,7 +236,7 @@
 
                         <tr>
                             <td colspan="7" class="text-center">
-                                Barang ready stock tidak ditemukan.
+                                Barang tidak ditemukan.
                             </td>
                         </tr>
 

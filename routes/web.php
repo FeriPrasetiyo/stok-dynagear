@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductImportController;
 use App\Http\Controllers\SalesStockController;
+use App\Http\Controllers\PurchaseTrackingController;
 use App\Http\Controllers\StockInController;
 use App\Http\Controllers\StockOutController;
 use App\Http\Controllers\StockCardController;
@@ -59,7 +60,7 @@ Route::middleware('auth')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Sales Stock Search
+| Sales
 | Sales + Admin Sales + Manager Sales + PL
 |--------------------------------------------------------------------------
 */
@@ -70,6 +71,9 @@ Route::middleware([
 ])->group(function () {
     Route::get('/sales/stock-search', [SalesStockController::class, 'index'])
         ->name('sales.stock-search');
+
+    Route::get('/sales/purchase-tracking', [PurchaseTrackingController::class, 'index'])
+        ->name('sales.purchase-tracking');
 });
 
 /*
@@ -167,7 +171,7 @@ Route::middleware([
 
 Route::middleware([
     'auth',
-    'role:super_admin,manager_pl,admin_pl,manager_sales,admin_sales,gudang,sales,purchasing',
+    'role:super_admin,manager_pl,admin_pl,manager_sales,admin_sales,gudang,purchasing',
 ])->group(function () {
     Route::get('/stock-card', [StockCardController::class, 'index'])
         ->name('stock-card.index');

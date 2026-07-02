@@ -32,7 +32,7 @@
     $canInventory = $isAdmin || $isManager || $isGudang;
     $canTransaction = $isAdmin || $isManager || $isGudang;
     $canPurchasing = $isAdmin || $isManager || $isPurchasing;
-    $canStockCard = $isAdmin || $isManager || $isGudang || $isSales || $isPurchasing;
+    $canStockCard = $isAdmin || $isManager || $isGudang || $isPurchasing;
     $canStockReport = $isAdmin || $isManager;
     $canSalesSearch = $isSales;
     $canAdminMenu = $isAdmin;
@@ -176,16 +176,29 @@
         @endif
 
         @if($canSalesSearch)
-            <li class="nav-item mt-3">
-                <a href="/sales/stock-search" class="nav-link text-dark">
+            <li class="nav-item mt-3 mb-1 text-muted small fw-bold">
+                SALES
+            </li>
+
+            <li class="nav-item">
+                <a href="/sales/stock-search"
+                   class="nav-link text-dark">
                     <i class="bi bi-search me-2"></i>
                     Cari Stok Sales
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/sales/purchase-tracking"
+                   class="nav-link text-dark">
+                    <i class="bi bi-truck-front me-2"></i>
+                    Tracking Purchase
                 </a>
             </li>
         @endif
 
         @if($canInventory)
-            <li class="nav-item">
+            <li class="nav-item mt-3">
                 <a href="/scan-qr" class="nav-link text-dark">
                     <i class="bi bi-qr-code-scan me-2"></i>
                     Scan QR
